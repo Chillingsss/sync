@@ -12,15 +12,25 @@
         body.dark-mode {
             background-color: #333;
             color: #fff;
+        }
 
+        #darkModeToggle {
+            position: fixed;
+            top: 0;
+            right: 0;
+            margin: 5px;
+            z-index: 1000;
         }
     </style>
 </head>
 
 <body class="container mt-4" id="body">
+    <!-- Toggle Dark Mode button fixed at the top -->
+    <button id="darkModeToggle" class="btn btn-secondary">Dark Mode</button>
+
     <div class="row">
         <div class="col-md-6">
-            <form action="upload.php" method="POST" enctype="multipart/form-data" class="mb-4">
+            <form action="upload.php" method="POST" enctype="multipart/form-data" class="mb-4 position-fixed">
                 <div class="form-group">
                     <label for="file">Choose File:</label>
                     <input type="file" class="form-control-file" id="file" name="file">
@@ -36,9 +46,6 @@
 
         <div class="col-md-6" id="imageContainer"></div>
     </div>
-
-
-    <button id="darkModeToggle" class="btn btn-secondary mt-2">Toggle Dark Mode</button>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
@@ -83,7 +90,6 @@
                     });
                 });
         }
-
 
         document.addEventListener('DOMContentLoaded', fetchImages);
 
