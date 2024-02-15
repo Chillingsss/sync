@@ -27,8 +27,10 @@
                     <a class="nav-link" href="#">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" onclick="logout()">Logout</a>
+                    <a class="nav-link" style="cursor: pointer;" onclick="logout()">Logout</a>
                 </li>
+
+
                 <button id="darkModeToggle" class="btn btn-secondary">Dark Mode</button>
             </ul>
         </div>
