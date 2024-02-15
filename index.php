@@ -6,14 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Uploads</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">\
+
 </head>
 
 <body class="mt-0" id="body">
-    <!-- Toggle Dark Mode button fixed at the top -->
 
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <a class="navbar-brand" href="#">Sync</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,16 +29,16 @@
                 <li class="nav-item">
                     <a class="nav-link" onclick="logout()">Logout</a>
                 </li>
-
+                <button id="darkModeToggle" class="btn btn-secondary">Dark Mode</button>
             </ul>
         </div>
     </nav>
 
-    <button id="darkModeToggle" class="btn btn-secondary d-flex align-items-center ml-auto">Dark Mode</button>
 
-    <div class="row">
-        <div class="col-md-6">
-            <form action="upload.php" method="POST" enctype="multipart/form-data" class="mb-4">
+
+    <div class="row-md-6 mt-5 ">
+        <div class="col-md-4 justify-content-center d-flex align-items-center mx-auto">
+            <form action="upload.php" method="POST" enctype="multipart/form-data" class="mb-3">
                 <div class="form-group">
                     <label for="file">Choose File:</label>
                     <input type="file" class="form-control-file" id="file" name="file">
@@ -53,7 +52,7 @@
             </form>
         </div>
 
-        <div class="col-md-6" id="imageContainer"></div>
+        <div class="col-md-13" id="imageContainer"></div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -101,7 +100,7 @@
                     data.forEach(post => {
                         const card = document.createElement('div');
                         card.classList.add('card', 'mb-4', 'mx-auto', 'd-block', 'custom-card'); // Added mx-auto and d-block for centering
-                        card.style.maxWidth = '300px'; // Added custom width style
+                        card.style.maxWidth = '500px'; // Added custom width style
 
                         const img = document.createElement('img');
                         img.src = 'uploads/' + post.filename;
