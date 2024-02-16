@@ -6,56 +6,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Uploads</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">\
+
+    <style>
+        /* Dark mode styles for the modal content */
+        .dark-mode .modal-content {
+            background-color: #343a40;
+            /* Dark background color for modal content */
+            color: #fff;
+            /* Light text color for modal content in dark mode */
+        }
+
+        /* Add more styles as needed */
+    </style>
 
 </head>
 
-<body class="mt-0" id="body">
+<body class="mt-0" id="body" style="background-color: #E5E4E2;">
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
-        <a class="navbar-brand" href="#">Sync</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <nav class="navbar navbar-expand-lg text-light fixed-top " id="navbar">
+        <a class="nav-link" href="#" style="text-decoration: none; color: black;">Sync</a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="#" style="text-decoration: none; color: black;">Home <span
+                            class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Profile</a>
+                    <a class="nav-link" href="#" style="text-decoration: none; color: black;">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" style="cursor: pointer;" onclick="logout()">Logout</a>
+                    <a class="nav-link" style="cursor: pointer; text-decoration: none; color: black;"
+                        onclick="logout()">Logout</a>
                 </li>
 
+                <button id="darkModeToggle" style="border: none; background: none;">
+                    <img src="img/dark.png" alt="" style="width: 24px; height: 24px; border: none;">
+                </button>
 
-                <button id="darkModeToggle" class="btn btn-secondary">Dark Mode</button>
             </ul>
+
+
         </div>
     </nav>
 
+    <div class="row-md-6 mt-5">
+        <div class="col-md-3 justify-content-center d-flex align-items-center mx-auto mb-4">
+            <!-- Button to trigger modal -->
+            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#postModal">
+                What's on your mind?
+            </button>
 
-
-    <div class="row-md-6 mt-5 ">
-        <div class="col-md-4 justify-content-center d-flex align-items-center mx-auto">
-            <form action="upload.php" method="POST" enctype="multipart/form-data" class="mb-3">
-                <div class="form-group">
-                    <label for="file">Choose File:</label>
-                    <input type="file" class="form-control-file" id="file" name="file">
+            <!-- Modal -->
+            <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form inside the modal -->
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="file">Choose File:</label>
+                                    <input type="file" class="form-control-file" id="file" name="file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="caption">Caption:</label>
+                                    <textarea class="form-control" id="caption" name="caption"
+                                        placeholder="What's on your mind?"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="caption">Caption:</label>
-                    <textarea class="form-control" id="caption" name="caption"
-                        placeholder="What's on your mind?"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary" name="submit">UPLOAD</button>
-            </form>
+            </div>
         </div>
-
         <div class="col-md-13" id="imageContainer"></div>
+
     </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
@@ -64,33 +105,89 @@
     <script>
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.getElementById('body');
+        const nav = document.getElementById('navbar');
+        const postModal = document.getElementById('postModal');
+        const navbarLinks = document.querySelectorAll('.navbar-nav a');
 
         darkModeToggle.addEventListener('click', () => {
             body.classList.toggle('bg-dark');
+            body.classList.toggle('text-white');
 
-            // Toggle text color and background for the caption textarea
+            nav.classList.toggle('bg-dark');
+            nav.classList.toggle('navbar-dark');
+
+            // Set background color of navbar to black if dark mode is enabled
+            if (body.classList.contains('bg-dark')) {
+                nav.style.backgroundColor = '#000'; // Black color
+            } else {
+                nav.style.backgroundColor = ''; // Use default or other color when not in dark mode
+            }
+
+            // Update navbar link colors based on dark mode
+            navbarLinks.forEach(link => {
+                link.classList.toggle('text-dark', !body.classList.contains('bg-dark'));
+                link.classList.toggle('text-white', body.classList.contains('bg-dark'));
+            });
+
+            postModal.classList.toggle('dark-mode');
+
+            console.log('Dark mode toggled:', postModal.classList.contains('dark-mode'));
+
             const captionTextarea = document.getElementById('caption');
 
             if (body.classList.contains('bg-dark')) {
-                body.classList.add('text-white');
-                captionTextarea.style.color = '#fff';
+                captionTextarea.style.color = '#6F6F6F';  // Set text color to white in dark mode
 
                 // Apply dark background to existing cards
                 const existingCards = document.querySelectorAll('.custom-card');
                 existingCards.forEach(card => {
                     card.classList.add('bg-dark', 'text-white');
+                    card.style.borderColor = '';  // Set border color to white
                 });
             } else {
-                body.classList.remove('text-white');
-                captionTextarea.style.color = '#000';
+                captionTextarea.style.color = '#000';  // Set text color to black in light mode
 
                 // Remove dark background from existing cards
                 const existingCards = document.querySelectorAll('.custom-card');
                 existingCards.forEach(card => {
                     card.classList.remove('bg-dark', 'text-white');
+                    card.style.borderColor = '';  // Set border color to black
                 });
             }
         });
+
+
+
+
+
+
+
+
+        function submitForm() {
+            const form = document.getElementById('uploadForm');
+            const userID = localStorage.getItem("id");
+            const formData = new FormData(form);
+
+
+            formData.append('userID', userID);
+
+            axios.post('upload.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(function (response) {
+                    console.log('Response Data:', response.data);
+                    // Handle success
+                    alert(response.data.message || response.data.error);
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    // Handle error
+                    alert('An error occurred. Please try again.');
+                });
+        }
+
 
         function fetchImages() {
             fetch('fetch_images.php')
@@ -101,34 +198,58 @@
 
                     data.forEach(post => {
                         const card = document.createElement('div');
-                        card.classList.add('card', 'mb-4', 'mx-auto', 'd-block', 'custom-card'); // Added mx-auto and d-block for centering
+                        card.classList.add('card', 'mb-4', 'mx-auto', 'd-block', 'custom-card', 'bg-amber-100');
+                        card.style.borderRadius = '10px';
                         card.style.maxWidth = '500px'; // Added custom width style
 
-                        const img = document.createElement('img');
-                        img.src = 'uploads/' + post.filename;
-                        img.alt = 'Uploaded Image';
-                        img.classList.add('card-img-top', 'custom-img', 'img-fluid'); // Added custom-img and img-fluid classes
+                        // Check if the post has a valid image URL
+                        if (post.filename) {
+                            const img = document.createElement('img');
+                            img.src = 'uploads/' + post.filename;
+                            img.alt = 'Uploaded Image';
+                            img.classList.add('card-img-top', 'custom-img', 'img-fluid'); // Added border classes
+                            card.appendChild(img); // Append image only if the URL is not null
+                        }
 
                         const cardBody = document.createElement('div');
-                        cardBody.classList.add('card-body');
+                        cardBody.classList.add('card-body'); // Added border classes
 
                         const p = document.createElement('p');
                         p.classList.add('card-text');
-                        p.textContent = post.caption;
+
+                        // Create a span element for the firstname and style it
+                        const firstNameSpan = document.createElement('span');
+                        firstNameSpan.style.fontWeight = 'bold'; // Make it bold
+                        firstNameSpan.style.fontSize = '1.5rem'; // Adjust the font size as needed
+
+                        // Set the text content of the span element
+                        firstNameSpan.textContent = post.firstname;
+
+                        // Create a span element for the caption and style it
+                        const captionSpan = document.createElement('span');
+                        captionSpan.style.fontSize = '1.2rem'; // Adjust the font size as needed
+                        captionSpan.textContent = '   "' + post.caption + '"';
+
+                        // Append the span elements to the paragraph
+                        p.appendChild(firstNameSpan);
+                        p.appendChild(captionSpan);
 
                         // Set text color based on dark mode
-                        if (body.classList.contains('dark-mode')) {
-                            p.style.color = '#fff';
-                        }
+                        // if (body.classList.contains('dark-mode')) {
+                        //     p.style.color = '#fff';
+                        //     cardBody.style.color = '#000'; // Set text color to black
+                        // }
+
 
                         cardBody.appendChild(p);
-                        card.appendChild(img);
                         card.appendChild(cardBody);
 
                         imageContainer.appendChild(card);
                     });
                 });
         }
+
+
 
         document.addEventListener('DOMContentLoaded', fetchImages);
 

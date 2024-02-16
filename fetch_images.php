@@ -11,7 +11,18 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-$sql = "SELECT * FROM uploads ORDER BY upload_date DESC";
+// $sql = "SELECT FROM uploads ORDER BY upload_date DESC";
+$sql = "SELECT 
+        uploads.id,
+        uploads.filename,
+        uploads.upload_date,
+        uploads.caption,
+        uploads.userID,
+        tbl_users.firstname
+        FROM uploads
+        INNER JOIN tbl_users ON tbl_users.id = uploads.userID
+        ORDER BY uploads.upload_date DESC
+        ";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
