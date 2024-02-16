@@ -92,7 +92,14 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-13" id="imageContainer"></div>
+        <div class="col-md-13 " id="imageContainer">
+        </div>
+        <div class="cold-md-13">
+            <form id="comment">
+                <textarea class="form-control" id="caption" name="caption"
+                    placeholder="What's on your mind?"></textarea>
+            </form>
+        </div>
 
     </div>
 
@@ -103,6 +110,8 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        const isLoggedIn = localStorage.getItem("isUserLoggedIn");
+
         const darkModeToggle = document.getElementById('darkModeToggle');
         const body = document.getElementById('body');
         const nav = document.getElementById('navbar');
@@ -120,7 +129,7 @@
             if (body.classList.contains('bg-dark')) {
                 nav.style.backgroundColor = '#000'; // Black color
             } else {
-                nav.style.backgroundColor = ''; // Use default or other color when not in dark mode
+                nav.style.backgroundColor = '#000'; // Use default or other color when not in dark mode
             }
 
             // Update navbar link colors based on dark mode
@@ -155,13 +164,6 @@
                 });
             }
         });
-
-
-
-
-
-
-
 
         function submitForm() {
             const form = document.getElementById('uploadForm');
@@ -211,49 +213,42 @@
                             card.appendChild(img); // Append image only if the URL is not null
                         }
 
+                        // Create a div for the card body
+                        // Create a div for the card body
                         const cardBody = document.createElement('div');
-                        cardBody.classList.add('card-body'); // Added border classes
+                        cardBody.classList.add('card-body', 'text-center');
 
-                        const p = document.createElement('p');
-                        p.classList.add('card-text');
-
-                        // Create a span element for the firstname and style it
-                        const firstNameSpan = document.createElement('span');
-                        firstNameSpan.style.fontWeight = 'bold'; // Make it bold
-                        firstNameSpan.style.fontSize = '1.5rem'; // Adjust the font size as needed
-
-                        // Set the text content of the span element
-                        firstNameSpan.textContent = post.firstname;
+                        // Create a div for the firstname
+                        const firstNameDiv = document.createElement('div');
+                        firstNameDiv.style.fontWeight = 'bold';
+                        firstNameDiv.style.fontSize = '1.5rem';
+                        firstNameDiv.textContent = post.firstname;
 
                         // Create a span element for the caption and style it
                         const captionSpan = document.createElement('span');
-                        captionSpan.style.fontSize = '1.2rem'; // Adjust the font size as needed
-                        captionSpan.textContent = '   "' + post.caption + '"';
+                        captionSpan.style.fontSize = '1.2rem';
+                        captionSpan.textContent = '"' + post.caption + '"';
 
-                        // Append the span elements to the paragraph
-                        p.appendChild(firstNameSpan);
-                        p.appendChild(captionSpan);
+                        // Append the firstname div to the card body
+                        cardBody.appendChild(firstNameDiv);
 
-                        // Set text color based on dark mode
-                        // if (body.classList.contains('dark-mode')) {
-                        //     p.style.color = '#fff';
-                        //     cardBody.style.color = '#000'; // Set text color to black
-                        // }
+                        // Append the caption span to the card body
+                        cardBody.appendChild(captionSpan);
 
-
-                        cardBody.appendChild(p);
+                        // Append the card body to the card
                         card.appendChild(cardBody);
 
+                        // Append the card to the image container
                         imageContainer.appendChild(card);
+
+
                     });
                 });
         }
 
-
-
         document.addEventListener('DOMContentLoaded', fetchImages);
 
-        const isLoggedIn = localStorage.getItem("isUserLoggedIn");
+
 
 
         document.getElementById("firstname").innerHTML = localStorage.getItem("firstname");
