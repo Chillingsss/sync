@@ -17,10 +17,15 @@
 
 </head>
 
-<body class="mt-0" id="body" style="background-color: #E5E4E2;">
+<body class="mt-5" id="body" style="background-color: #E5E4E2;">
 
     <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="navbar">
-        <a class="navbar-brand" href="#" style="text-decoration: none; color: black;">Sync</a>
+        <a class="navbar-brand" href="#" style="text-decoration: none; color: black;">
+            <img src="img/sync.png" alt="Sync Logo" style="height: 60px; width: auto;">
+        </a>
+
+        <span id="userFirstname" style="margin-left: 10px;"></span>
+
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -28,24 +33,30 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link text-dark" href="#" style="text-decoration: none; color: black;">Home <span
+                    <a class="nav-link text-dark" href="#"
+                        style="text-decoration: none; color: black; font-size: 17px; font-weight: bold;">Home <span
                             class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" style="text-decoration: none; color: black;">Profile</a>
+                    <a class="nav-link text-dark" href="#"
+                        style="text-decoration: none; color: black; font-size: 17px; font-weight: bold;">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" style="cursor: pointer; text-decoration: none; color: black;"
+                    <a class="nav-link text-dark"
+                        style="cursor: pointer; text-decoration: none; color: black; font-size: 17px; font-weight: bold;"
                         onclick="logout()">Logout</a>
                 </li>
             </ul>
         </div>
     </nav>
 
+
+
     <div class="row-md-6 mt-5">
+
         <div class="col-md-3 justify-content-center d-flex align-items-center mx-auto mb-4">
             <!-- Button to trigger modal -->
-            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#postModal">
+            <button type="button" class="btn btn-outline-secondary mt-5" data-toggle="modal" data-target="#postModal">
                 What's on your mind?
             </button>
 
@@ -90,6 +101,17 @@
     <script>
         const isLoggedIn = localStorage.getItem("isUserLoggedIn");
 
+        // Assuming you have a PHP endpoint to fetch user details
+        const userId = localStorage.getItem("id");
+        fetch(`fetch_user.php?userId=${userId}`)
+            .then(response => response.json())
+            .then(user => {
+                // Update the user's firstname in the HTML
+                document.getElementById('userFirstname').textContent = user.firstname;
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+            });
 
 
         function submitForm() {
