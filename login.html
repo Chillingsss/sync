@@ -106,7 +106,9 @@
                                         <small id="passwordErrorMsg" class="form-text text-danger"></small>
                                     </div>
                                     <div class="d-flex justify-content-center">
-                                        <button class="btn btn-success w-25" onclick="registerUser()">Sign up</button>
+                                        <button type="button" class="btn btn-success w-25" onclick="registerUser()">Sign
+                                            up</button>
+
                                     </div>
 
                                 </form>
@@ -265,79 +267,34 @@
             document.getElementById('logout-btn').style.display = isLoggedIn ? 'block' : 'none';
         }
 
+        // Change the registerUser function
         function registerUser() {
             try {
-                const firstnameInput = document.getElementById("reg-firstname");
-                const middlenameInput = document.getElementById("reg-middlename");
-                const lastnameInput = document.getElementById("reg-lastname");
-                const emailInput = document.getElementById("reg-email");
-                const contactInput = document.getElementById("reg-cpnumber");
-                const usernameInput = document.getElementById("reg-username");
-                const passwordInput = document.getElementById("reg-password");
+                const registrationForm = document.getElementById("registration-form-inner");
+                const formData = new FormData(registrationForm);
 
-                const firstnameErrorMsg = document.getElementById("firstnameErrorMsg");
-                const middlenameErrorMsg = document.getElementById("middlenameErrorMsg");
-                const lastnameErrorMsg = document.getElementById("lastnameErrorMsg");
-                const emailErrorMsg = document.getElementById("emailErrorMsg");
-                const contactErrorMsg = document.getElementById("contactErrorMsg");
-                const usernameErrorMsg = document.getElementById("usernameErrorMsg");
-                const passwordErrorMsg = document.getElementById("passwordErrorMsg");
+                axios.post("http://localhost/media/PHP/register.php", formData)
+                    .then((response) => {
+                        console.log(response);
+                        const responseData = response.data || {};
 
-                // Reset previous error messages and border colors
-                firstnameErrorMsg.textContent = '';
-                middlenameErrorMsg.textContent = '';
-                lastnameErrorMsg.textContent = '';
-                emailErrorMsg.textContent = '';
-                contactErrorMsg.textContent = '';
-                usernameErrorMsg.textContent = '';
-                passwordErrorMsg.textContent = '';
-
-                // Check if any field is empty
-                if (firstnameInput.value.trim() === '' || middlenameInput.value.trim() === '' ||
-                    lastnameInput.value.trim() === '' || emailInput.value.trim() === '' ||
-                    contactInput.value.trim() === '' || usernameInput.value.trim() === '' ||
-                    passwordInput.value.trim() === '') {
-                    // Display error messages for empty fields
-                    if (firstnameInput.value.trim() === '') {
-
-                        firstnameInput.style.borderColor = 'red';
-                    }
-                    if (middlenameInput.value.trim() === '') {
-
-                        middlenameInput.style.borderColor = 'red';
-                    }
-                    if (lastnameInput.value.trim() === '') {
-
-                        lastnameInput.style.borderColor = 'red';
-                    }
-                    if (emailInput.value.trim() === '') {
-
-                        emailInput.style.borderColor = 'red';
-                    }
-                    if (contactInput.value.trim() === '') {
-
-                        contactInput.style.borderColor = 'red';
-                    }
-                    if (usernameInput.value.trim() === '') {
-                        console.log("Username is empty");
-
-                        usernameInput.style.borderColor = 'red';
-                    }
-                    if (passwordInput.value.trim() === '') {
-                        console.log("Password is empty");
-
-                        passwordInput.style.borderColor = 'red';
-                    }
-                    return; // Stop further execution
-                }
-
-                // Proceed with form submission if all validations pass
-                const formData = new FormData(document.getElementById('registration-form-inner'));
-                // You can proceed with the Axios request here
+                        if (responseData.status === "success") {
+                            alert("Registration failed!");
+                        } else {
+                            alert("Registration successful!");
+                            window.location.href = "login.html";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Registration error: ", error);
+                    });
             } catch (error) {
                 console.error("Registration error: ", error);
             }
         }
+
+
+
 
 
 

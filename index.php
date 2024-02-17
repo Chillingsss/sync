@@ -109,6 +109,7 @@
                     console.log('Response Data:', response.data);
                     // Handle success
                     alert(response.data.message || response.data.error);
+                    window.location.href = "index.php";
                 })
                 .catch(function (error) {
                     console.error('Error:', error);
