@@ -16,34 +16,35 @@
 
 
 </head>
+<!-- #E5E4E2; -->
 
-<body class="mt-5" id="body" style="background-color: #E5E4E2;">
+<body class="mt-5" id="body" style="background-color: #18191A">
 
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="navbar">
-        <a class="navbar-brand" href="#" style="text-decoration: none; color: black;">
-            <img src="img/sync.png" alt="Sync Logo" style="height: 60px; width: auto;">
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
+        <a class="navbar-brand" href="#" style="text-decoration: none; ">
+            <img src="img/syncc.png" alt="Sync Logo" style="height: 50px; width: 100px;">
         </a>
 
-        <span id="userFirstname" style="margin-left: 10px;"></span>
+        <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
 
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+            <span class="navbar-toggler-icon bg-light"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link text-dark" href="#"
-                        style="text-decoration: none; color: black; font-size: 17px; font-weight: bold;">Home <span
+                    <a class="nav-link" href="#"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Home <span
                             class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#"
-                        style="text-decoration: none; color: black; font-size: 17px; font-weight: bold;">Profile</a>
+                    <a class="nav-link" href="#"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark"
-                        style="cursor: pointer; text-decoration: none; color: black; font-size: 17px; font-weight: bold;"
+                    <a class="nav-link"
+                        style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
                         onclick="logout()">Logout</a>
                 </li>
             </ul>
@@ -64,9 +65,9 @@
             <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+                    <div class="modal-content" style="background-color: #242526;">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
+                            <h5 class="modal-title" id="postModalLabel" style="color: #E4E6EB;">Create a Post</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -75,17 +76,28 @@
                             <!-- Form inside the modal -->
                             <form id="uploadForm" enctype="multipart/form-data">
                                 <div class="form-group">
-                                    <label for="file">Choose File:</label>
-                                    <input type="file" class="form-control-file" id="file" name="file">
+                                    <!-- Input for file selection -->
+                                    <input type="file" class="form-control-file" id="file" name="file"
+                                        style="display: none;">
+
+                                    <!-- Display selected image -->
+                                    <label for="file" style="cursor: pointer;">
+                                        <span style="color: #E4E6EB;">Choose File</span>
+                                        <img id="previewImage" src="#" alt="Selected Image"
+                                            style="max-width: 100%; max-height: 200px;" />
+
+                                    </label>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="caption">Caption:</label>
                                     <textarea class="form-control" id="caption" name="caption"
-                                        placeholder="What's on your mind?"></textarea>
+                                        placeholder="What's on your mind?"
+                                        style="background-color: #242526; color: #E4E6EB;"></textarea>
                                 </div>
                             </form>
                         </div>
-                        <div class="modal-footer">
+                        <div class=" modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
                         </div>
@@ -100,6 +112,22 @@
 
     <script>
         const isLoggedIn = localStorage.getItem("isUserLoggedIn");
+
+        document.getElementById('file').addEventListener('change', function (event) {
+            const fileInput = event.target;
+            const previewImage = document.getElementById('previewImage');
+
+            // Check if a file is selected
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    previewImage.src = e.target.result;
+                };
+
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        });
 
         // Assuming you have a PHP endpoint to fetch user details
         const userId = localStorage.getItem("id");
@@ -155,13 +183,13 @@
                             .then(user => {
                                 // Use user.firstname as post.postId
                                 const cardHtml = `
-                            <div class="card mt-5 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px;">
-                                <div class="text-start ml-3" style="font-weight: bold; font-size: 1.2rem;">${post.firstname}</div>
+                            <div class="card mt-5 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px; background-color: #4b4d4e;">
+                                <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
                                 
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
                                 <div class="text-center small text-muted">${formatTimestamp(post.upload_date)}</div>
                                 <div class="text-center mb-4">
-                                    <div class="mb-4" style="font-size: 1.2rem;">"${post.caption}"</div>
+                                    <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">"${post.caption}"</div>
                                     
                                 </div>
                                 <!-- Comment Section -->
