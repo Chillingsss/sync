@@ -149,33 +149,52 @@
                     imageContainer.innerHTML = '';
 
                     data.forEach(post => {
-                        const cardHtml = `
+                        // Fetch user details for the post
+                        fetch(`fetch_user.php?userId=${post.userId}`)
+                            .then(response => response.json())
+                            .then(user => {
+                                // Use user.firstname as post.postId
+                                const cardHtml = `
                             <div class="card mt-5 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px;">
                                 <div class="text-start ml-3" style="font-weight: bold; font-size: 1.2rem;">${post.firstname}</div>
+                                
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
+                                <div class="text-center small text-muted">${formatTimestamp(post.upload_date)}</div>
                                 <div class="text-center mb-4">
                                     <div class="mb-4" style="font-size: 1.2rem;">"${post.caption}"</div>
+                                    
                                 </div>
                                 <!-- Comment Section -->
                                 <div>
-                                    <h5>Comments:</h5>
                                     <ul id="comments-${post.postId}"></ul>
                                     <form onsubmit="addComment(event, ${post.postId})">
-                                        <input type="text" id="comment-${post.postId}" placeholder="Add a comment" required>
-                                        <button type="submit">Post</button>
+                                        <input type="text" class="justify-content-center d-flex align-items-center mx-auto w-20 text-center" style="width:400px" id="comment-${post.postId}" placeholder="Add a comment" required>
+                                        <button type="submit" class="justify-content-center d-flex align-items-center mx-auto mt-2" style="width: 100px;">Post</button>
                                     </form>
                                 </div>
                             </div>
                         `;
 
-                        // Append the card HTML to the image container
-                        imageContainer.innerHTML += cardHtml;
+                                // Append the card HTML to the image container
+                                imageContainer.innerHTML += cardHtml;
 
-                        // Fetch and display comments for each post
-                        fetchComments(post.postId);
+                                // Fetch and display comments for each post
+                                fetchComments(post.postId);
+                            })
+                            .catch(error => {
+                                console.error('Error fetching user details:', error);
+                            });
                     });
                 });
         }
+
+
+        // Function to format timestamp to a readable format (adjust as needed)
+        function formatTimestamp(timestamp) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(timestamp).toLocaleDateString('en-US', options);
+        }
+
 
         function fetchComments(postId) {
             fetch(`fetch_comments.php?postId=${postId}`)
