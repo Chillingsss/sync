@@ -11,6 +11,9 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
+// Assuming postId is passed as a parameter (you should validate and sanitize it)
+$postId = $_GET['postId'];
+
 $sql = "SELECT 
         posts.id,
         posts.filename,
@@ -20,14 +23,23 @@ $sql = "SELECT
         tbl_users.firstname
         FROM posts
         INNER JOIN tbl_users ON tbl_users.id = posts.userID
-        ORDER BY posts.upload_date DESC";
-
+        WHERE posts.id = :postId";  // Add a WHERE clause to filter by postId
 $stmt = $conn->prepare($sql);
+$stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
 $stmt->execute();
-$posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-header('Content-Type: application/json');
-echo json_encode($posts);
+// Fetch the post details
+$postDetails = $stmt->fetch(PDO::FETCH_ASSOC);
+
+// Check if postDetails is not empty (post with given ID exists)
+if ($postDetails) {
+    header('Content-Type: application/json');
+    echo json_encode($postDetails);
+} else {
+    // Return an error message if post with given ID was not found
+    header('HTTP/1.1 404 Not Found');
+    echo json_encode(['error' => 'Post not found']);
+}
 
 $conn = null;
 ?>

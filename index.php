@@ -18,7 +18,7 @@
 </head>
 <!-- #E5E4E2; -->
 
-<body class="mt-5" id="body" style="background-color: #18191A">
+<body class="mt-5" id="body" style="background-color: #0F0F0F">
 
    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
       <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
@@ -36,7 +36,7 @@
          <ul class="navbar-nav ml-auto">
 
             <li class="nav-item">
-               <a class="nav-link" href="#"
+               <a class="nav-link" href="profile.html"
                   style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
             </li>
             <li class="nav-item">
@@ -63,7 +63,7 @@
          <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
-               <div class="modal-content" style="background-color: #242526;">
+               <div class="modal-content" style="background-color: #242526; border-radius:20px;">
                   <div class="modal-header">
                      <h5 class="modal-title" id="postModalLabel" style="color: #E4E6EB;">Create a Post</h5>
                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -79,9 +79,9 @@
 
                            <!-- Display selected image -->
                            <label for="file" style="cursor: pointer;">
-                              <span style="color: #E4E6EB;">Choose File</span>
+                              <span style="color: #E4E6EB;">Choose File </span>
                               <img id="previewImage" src="#" alt="Selected Image"
-                                 style="max-width: 100%; max-height: 200px;" />
+                                 style="max-width: 100%; max-height: 200px; border-radius:30px" />
 
                            </label>
                         </div>
@@ -195,7 +195,7 @@
                      .then(user => {
                         // Use user.firstname as post.postId
                         const cardHtml = `
-                                <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px; background-color: #4b4d4e;">
+                                <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px; background-color: #272727;">
                                     <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
                                     <a href="#" onclick="openPostDetails(${post.postId})">
                                         ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
@@ -248,14 +248,13 @@
 
                // Display the detailed information (customize this part based on your data structure)
                postDetailsContainer.innerHTML = `
-                    <div>
-                        <h4>${postDetails.firstname}'s Post</h4>
-                        <img src="uploads/${postDetails.filename}" alt="Uploaded Image" class="img-fluid">
-                        <p>${postDetails.caption}</p>
-                        <p>Posted on: ${formatTimestamp(postDetails.upload_date)}</p>
-                        <!-- Add more details as needed -->
-                    </div>
-                `;
+              <div>
+                  <h4>${postDetails.firstname}'s Post</h4>
+                  <img src="uploads/${postDetails.filename}" alt="Uploaded Image" class="img-fluid">
+                  <p>${postDetails.caption}</p>
+                  <p>Posted on: ${formatTimestamp(postDetails.upload_date)}</p>
+              </div>
+          `;
 
                // Show the modal
                $('#imageModal').modal('show');
@@ -264,6 +263,7 @@
                console.error('Error fetching post details:', error);
             });
       }
+
 
 
       // Function to format timestamp to a readable format (adjust as needed)

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Uploads</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body class="mt-5" id="body" style="background-color: #18191A">
+
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
+        <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
+            <img src="img/syncc.png" alt="Sync Logo" style="height: 50px; width: 100px;">
+        </a>
+
+        <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
+
+        <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <img src="img/menu.png" alt="Toggle Navigation" style="width: 40px; height: 40px;">
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
+                        onclick="logout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4" style="color: #E4E6EB;">Your Posts</h2>
+
+        <div class="row" id="postsContainer">
+            <!-- User posts will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Include your modal and other HTML content here -->
+
+    <script>
+        // Include your JavaScript code here
+        function formatTimestamp(timestamp) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(timestamp).toLocaleDateString('en-US', options);
+        }
+
+        // Function to fetch and display user posts
+        function fetchUserPosts() {
+            axios.get('profile.php')
+                .then(response => {
+                    console.log('MY RES', response);
+                    const postsContainer = document.getElementById('postsContainer');
+                    postsContainer.innerHTML = '';
+
+                    // Assuming the response is an array of posts
+                    if (Array.isArray(response.data)) {
+                        response.data.forEach(post => {
+                            const postHtml = `
+                            <div class="col-md-4 mb-4">
+                                <div class="card custom-card" style="border-radius: 20px; background-color: #4b4d4e;">
+                                    <a href="#" onclick="openPostDetails(${post.postId})">
+                                        ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
+                                    </a>
+                                    <div style="text-align: right;" class="small text-muted">
+                                        ${formatTimestamp(post.upload_date)}
+                                    </div>
+                                    <div class="text-center mb-4">
+                                        <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">
+                                            "${post.caption}"
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                            postsContainer.innerHTML += postHtml;
+                        });
+                    } else {
+                        console.error('Invalid response format:', response.data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user posts:', error);
+                });
+        }
+
+        // Call the function to fetch and display user posts
+        fetchUserPosts();
+    </script>
+</body>
+
+</html>
