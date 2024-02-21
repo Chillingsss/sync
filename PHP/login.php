@@ -6,7 +6,7 @@ header("Access-Control-Allow-Headers: Authorization, Content-Type");
 
 class Data
 {
-    // USERS
+
     function loginUser($json)
     {
         include "connection.php";
@@ -38,7 +38,6 @@ class Data
                             "username" => $data[0]["username"],
                         ];
 
-                        // Set login status in the session
                         $_SESSION["isLoggedIn"] = true;
 
                         return json_encode(array("status" => 1, "data" => $data));
@@ -60,8 +59,8 @@ class Data
             error_log("Exception: " . $errorMsg);
             return json_encode(array("status" => -1, "title" => "An error occurred.", "message" => $errorMsg));
         } finally {
-            $stmt = null; // Close the statement
-            $conn = null; // Close the database connection
+            $stmt = null;
+            $conn = null;
         }
     }
 }
