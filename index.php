@@ -23,7 +23,7 @@
 
    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
       <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
-         <img src="img/syncc.png" alt="Sync Logo" style="height: 50px; width: 100px;">
+         <img src="img/sync.png" alt="Sync Logo" style="height: 50px; width: 100px;">
       </a>
 
       <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>

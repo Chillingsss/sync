@@ -94,89 +94,14 @@ function checkPasswordMatch() {
     if (password !== retypePassword) {
         errorElement.textContent = "Passwords do not match";
     } else {
-        errorElement.textContent = "";
+        errorElement.textContent = ""; // Clear the error message if passwords match
     }
 }
 
 function registerUser() {
     try {
-        const firstnameInput = document.getElementById("reg-firstname");
-        const middlenameInput = document.getElementById("reg-middlename");
-        const lastnameInput = document.getElementById("reg-lastname");
-        const emailInput = document.getElementById("reg-email");
-        const cpnumberInput = document.getElementById("reg-cpnumber");
-        const userInput = document.getElementById("reg-username");
-        const passInput = document.getElementById("reg-password");
-        const retypePasswordInput = document.getElementById("reg-retype-password");
-
-        // Reset previous error messages and border colors
-        document.getElementById("firstnameErrorMsg").textContent = '';
-        document.getElementById("middlenameErrorMsg").textContent = '';
-        document.getElementById("lastnameErrorMsg").textContent = '';
-        document.getElementById("emailErrorMsg").textContent = '';
-        document.getElementById("contactErrorMsg").textContent = '';
-        document.getElementById("userErrorMsg").textContent = '';
-        document.getElementById("passErrorMsg").textContent = '';
-        document.getElementById("retypePasswordErrorMsg").textContent = '';
-
-        firstnameInput.style.borderColor = '';
-        middlenameInput.style.borderColor = '';
-        lastnameInput.style.borderColor = '';
-        emailInput.style.borderColor = '';
-        cpnumberInput.style.borderColor = '';
-        userInput.style.borderColor = '';
-        passInput.style.borderColor = '';
-        retypePasswordInput.style.borderColor = '';
-
-        // Check for empty fields
-        if (
-            firstnameInput.value.trim() === '' ||
-            middlenameInput.value.trim() === '' ||
-            lastnameInput.value.trim() === '' ||
-            emailInput.value.trim() === '' ||
-            cpnumberInput.value.trim() === '' ||
-            userInput.value.trim() === '' ||
-            passInput.value.trim() === '' ||
-            retypePasswordInput.value.trim() === ''
-        ) {
-            if (firstnameInput.value.trim() === '') {
-                document.getElementById("firstnameErrorMsg").textContent = 'First name cannot be empty';
-                firstnameInput.style.borderColor = 'red';
-            }
-            if (middlenameInput.value.trim() === '') {
-                document.getElementById("middlenameErrorMsg").textContent = 'Middle name cannot be empty';
-                middlenameInput.style.borderColor = 'red';
-            }
-            if (lastnameInput.value.trim() === '') {
-                document.getElementById("lastnameErrorMsg").textContent = 'Last name cannot be empty';
-                lastnameInput.style.borderColor = 'red';
-            }
-            if (emailInput.value.trim() === '') {
-                document.getElementById("emailErrorMsg").textContent = 'Email cannot be empty';
-                emailInput.style.borderColor = 'red';
-            }
-            if (cpnumberInput.value.trim() === '') {
-                document.getElementById("contactErrorMsg").textContent = 'Contact number cannot be empty';
-                cpnumberInput.style.borderColor = 'red';
-            }
-            if (userInput.value.trim() === '') {
-                document.getElementById("userErrorMsg").textContent = 'Username cannot be empty';
-                userInput.style.borderColor = 'red';
-            }
-            if (passInput.value.trim() === '') {
-                document.getElementById("passErrorMsg").textContent = 'Password cannot be empty';
-                passInput.style.borderColor = 'red';
-            }
-            if (retypePasswordInput.value.trim() === '') {
-                document.getElementById("retypePasswordErrorMsg").textContent = 'Please re-type your password';
-                retypePasswordInput.style.borderColor = 'red';
-            }
-
-            return;
-        }
-
-        const password = passwordInput.value;
-        const retypePassword = retypePasswordInput.value;
+        const password = document.getElementById("reg-password").value;
+        const retypePassword = document.getElementById("reg-retype-password").value;
 
         // Check if the passwords match
         if (password !== retypePassword) {
@@ -187,7 +112,7 @@ function registerUser() {
         const registrationForm = document.getElementById("registration-form-inner");
         const formData = new FormData(registrationForm);
 
-        axios.post("http://localhost/media/PHP/register.php", formData)
+        axios.post("http://localhost/sync/PHP/register.php", formData)
             .then((response) => {
                 console.log(response);
                 const responseData = response.data || {};
@@ -280,7 +205,7 @@ function loginUser() {
         formData.append("json", JSON.stringify(jsonData));
 
         axios({
-            url: "http://localhost/media/PHP/login.php",
+            url: "http://localhost/sync/PHP/login.php",
             method: "post",
             data: formData,
         })

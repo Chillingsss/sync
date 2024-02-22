@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
@@ -69,7 +70,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form id="registration-form-inner" method="post">
+                                <form id="registration-form-inner" method="post" onsubmit="registerUser()">
                                     <div class="form-group" style="margin-bottom: 20px;">
                                         <input type="text" class="form-control" name="reg-firstname" id="reg-firstname"
                                             placeholder="First Name" required>
@@ -115,9 +116,7 @@
                                     </div>
 
                                     <div class="d-flex justify-content-center">
-                                        <button type="submit" class="btn btn-success w-25" onclick="registerUser()">Sign
-                                            up</button>
-
+                                        <button type="submit" class="btn btn-success w-25">Sign up</button>
                                     </div>
 
                                 </form>

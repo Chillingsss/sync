@@ -35,7 +35,7 @@ function submitForm() {
 
     formData.append('userID', userID);
 
-    axios.post('upload.php', formData, {
+    axios.post('PHP/upload.php', formData, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
@@ -61,11 +61,11 @@ function fetchImages() {
             imageContainer.innerHTML = '';
 
             data.forEach(post => {
-                // Fetch user details for the post
+
                 fetch(`fetch_user.php?userId=${post.userId}`)
                     .then(response => response.json())
                     .then(user => {
-                        // Use user.firstname as post.postId
+
                         const cardHtml = `
                         <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px; background-color: #272727;">
                             <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>

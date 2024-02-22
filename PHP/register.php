@@ -27,13 +27,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO tbl_users (firstname, middlename, lastname, email, cpnumber, username, password)
             VALUES ('$firstname', '$middlename', '$lastname', '$email', '$cpnumber', '$username', '$password')";
 
-    if ($conn->query($sql) === TRUE) {
+    $result = $conn->query($sql);
+
+    if ($result === TRUE) {
         $response["status"] = "success";
         $response["message"] = "New record created successfully";
     } else {
         $response["status"] = "error";
         $response["message"] = "Error: " . $sql . "<br>" . $conn->error;
+        $response["query"] = $sql; // Add the actual query to the response for debugging
     }
+
 }
 
 echo json_encode($response); // Send JSON response
