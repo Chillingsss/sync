@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "";
+$password = "pelino";
 $database = "db_socialmedia";
 
 try {

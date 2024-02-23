@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 // Your database connection logic
 $servername = "127.0.0.1";
 $username = "root";
-$password = "";
+$password = "pelino";
 $dbname = "db_socialmedia";
 
 try {

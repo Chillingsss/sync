@@ -100,6 +100,7 @@ function checkPasswordMatch() {
 
 function registerUser() {
     try {
+
         const password = document.getElementById("reg-password").value;
         const retypePassword = document.getElementById("reg-retype-password").value;
 
@@ -131,13 +132,6 @@ function registerUser() {
         console.error("Registration error: ", error);
     }
 }
-
-
-
-
-
-
-
 
 
 

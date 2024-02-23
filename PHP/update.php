@@ -8,7 +8,7 @@ class Update
         $json = json_decode($json, true);
         $servername = "127.0.0.1";
         $username = "root";
-        $password = ""; // If you haven't set a password, leave it empty
+        $password = "pelino"; // If you haven't set a password, leave it empty
         $database = "user_registration";
 
         $conn = new mysqli($servername, $username, $password, $database);
