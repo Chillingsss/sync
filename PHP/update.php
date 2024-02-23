@@ -9,7 +9,7 @@ class Update
         $servername = "127.0.0.1";
         $username = "root";
         $password = "pelino"; // If you haven't set a password, leave it empty
-        $database = "user_registration";
+        $database = "db_socialmedia";
 
         $conn = new mysqli($servername, $username, $password, $database);
 
@@ -26,10 +26,14 @@ class Update
                 $updatedFirstname = $json["updated-firstname"];
                 $updatedMiddlename = $json["updated-middlename"];
                 $updatedLastname = $json["updated-lastname"];
+                $updatedEmail = $json["updated-email"];
+                $updatedCpnumber = $json["updated-cpnumber"];
+                $updatedUsername = $json["updated-username"];
+                $updatedPassword = $json["updated-password"];
 
                 // Update user details in the database using prepared statement
-                $stmt = $conn->prepare("UPDATE users SET firstname=?, middlename=?, lastname=? WHERE id=?");
-                $stmt->bind_param("sssi", $updatedFirstname, $updatedMiddlename, $updatedLastname, $userId);
+                $stmt = $conn->prepare("UPDATE tbl_users SET firstname=?, middlename=?, lastname=?, email=?, cpnumber=?, username=?, password=? WHERE id=?");
+                $stmt->bind_param("sssi", $updatedFirstname, $updatedMiddlename, $updatedLastname, $updatedEmail, $updatedCpnumber, $updatedUsername, $updatedPassword, $userId);
 
                 if ($stmt->execute()) {
                     echo "Details updated successfully";

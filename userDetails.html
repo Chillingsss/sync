@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+
+<body class="mt-5" id="body" style="background-color: #0F0F0F">
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
+        <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
+            <img src="img/sync.png" alt="Sync Logo" style="height: 50px; width: 100px;">
+        </a>
+
+        <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
+
+        <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <img src="img/menu.png" alt="Toggle Navigation" style="width: 40px; height: 40px;">
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="userDetails.html"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">User
+                        Details</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"
+                        style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
+                        onclick="logout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">User Details</h5>
+            <form id="user-details-form">
+                <div class="form-group">
+                    <label for="firstname">First Name:</label>
+                    <span id="firstname" class="form-control-plaintext"></span>
+                </div>
+                <div class="form-group">
+                    <label for="middlename">Middle Name:</label>
+                    <span id="middlename" class="form-control-plaintext"></span>
+                </div>
+                <div class="form-group">
+                    <label for="lastname">Last Name:</label>
+                    <span id="lastname" class="form-control-plaintext"></span>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <span id="email" class="form-control-plaintext"></span>
+                </div>
+                <div class="form-group">
+                    <label for="cpnumber">Contact Number:</label>
+                    <span id="cpnumber" class="form-control-plaintext"></span>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <span id="username" class="form-control-plaintext"></span>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <span id="password" class="form-control-plaintext"></span>
+                </div>
+
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateDetailsModal">
+                    Update
+                </button>
+                <button id="delete-account-btn" onclick="deleteAccount()" type="button" class="btn btn-danger">Delete
+                    Account</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Your existing modal code -->
+    <div class="modal fade" id="updateDetailsModal" tabindex="-1" role="dialog"
+        aria-labelledby="updateDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateDetailsModalLabel">Update Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h2>Update Details</h2>
+                    <form id="update-details-form">
+                        <!-- Include user details in the modal -->
+                        <div class="form-group">
+                            <label for="updated-firstname">Updated First Name: </label>
+                            <input type="text" id="updated-firstname" required><br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updated-middlename">Updated Middle Name: </label>
+                            <input type="text" id="updated-middlename" required><br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updated-lastname">Updated Last Name: </label>
+                            <input type="text" id="updated-lastname" required><br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updated-email">Updated Email: </label>
+                            <input type="text" id="updated-email" required><br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updated-cpnumber">Updated Contact Number: </label>
+                            <input type="text" id="updated-cpnumber" required><br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updated-username">Updated Username: </label>
+                            <input type="text" id="updated-username" required><br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="updated-password">Updated Password: </label>
+                            <input type="text" id="updated-password" required><br>
+                        </div>
+
+                        <input type="button" value="Update" onclick="updateDetails()">
+                        <input type="button" value="Cancel" onclick="cancelUpdate()">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <div id="update-details-form-container" style="display: none;">
+        <h2>Update Details</h2>
+        <form id="update-details-form">
+            <label for="updated-firstname">Updated First Name: </label>
+            <input type="text" id="updated-firstname" required><br>
+
+            <label for="updated-middlename">Updated Middle Name: </label>
+            <input type="text" id="updated-middlename" required><br>
+
+            <label for="updated-lastname">Updated Last Name: </label>
+            <input type="text" id="updated-lastname" required><br>
+
+            <label for="updated-email">Updated Email: </label>
+            <input type="text" id="updated-email" required><br>
+
+            <label for="updated-cpnumber">Updated Contact Number: </label>
+            <input type="text" id="updated-cpnumber" required><br>
+
+            <label for="updated-username">Updated Username: </label>
+            <input type="text" id="updated-username" required><br>
+
+            <label for="updated-password">Updated Password: </label>
+            <input type="text" id="updated-password" required><br>
+
+            <input type="button" value="Update" onclick="updateDetails()">
+            <input type="button" value="Cancel" onclick="cancelUpdate()">
+        </form>
+    </div> -->
+
+
+
+    <script>
+        // Function to fetch user details using Axios
+        function fetchUserDetails() {
+            axios.get('http://localhost/sync/PHP/fetch_user_details.php')
+                .then(response => {
+                    const userData = response.data; // Assuming your user details are in the response.data
+
+                    // Update the content of the spans with the received user data
+                    document.getElementById("firstname").textContent = userData.firstname;
+                    document.getElementById("middlename").textContent = userData.middlename;
+                    document.getElementById("lastname").textContent = userData.lastname;
+                    document.getElementById("email").textContent = userData.email;
+                    document.getElementById("cpnumber").textContent = userData.cpnumber;
+                    document.getElementById("username").textContent = userData.username;
+                    document.getElementById("password").textContent = userData.password;
+
+                    // Open the modal after fetching user details
+                    $('#updateDetailsModal').modal('show');
+                })
+                .catch(error => {
+                    console.error('Error fetching user details:', error);
+                });
+        }
+
+        function updateDetails() {
+            // Retrieve the updated details from the form
+            var updatedFirstname = document.getElementById("updated-firstname").value;
+            var updatedMiddlename = document.getElementById("updated-middlename").value;
+            var updatedLastname = document.getElementById("updated-lastname").value;
+            var updatedEmail = document.getElementById("updated-email").value;
+            var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+            var updatedUsername = document.getElementById("updated-username").value;
+            var updatedPassword = document.getElementById("updated-password").value;
+
+            // Update the displayed user details
+            document.getElementById("firstname").innerHTML = updatedFirstname;
+            document.getElementById("middlename").innerHTML = updatedMiddlename;
+            document.getElementById("lastname").innerHTML = updatedLastname;
+            document.getElementById("email").innerHTML = updatedEmail;
+            document.getElementById("cpnumber").innerHTML = updatedCpnumber;
+            document.getElementById("username").innerHTML = updatedUsername;
+            document.getElementById("password").innerHTML = updatedPassword;
+
+            const jsonData = {
+                "updated-firstname": updatedFirstname,
+                "updated-middlename": updatedMiddlename,
+                "updated-lastname": updatedLastname,
+                "updated-email": updatedEmail,
+                "updated-cpnumber": updatedCpnumber,
+                "updated-username": updatedUsername,
+                "updated-password": updatedPassword
+            };
+
+            const formdata = new FormData();
+            formdata.append("operation", "update");
+            formdata.append("json", JSON.stringify(jsonData));
+
+            // Use axios to send the data to the server
+            axios.post("http://localhost/sync/PHP/update.php", formdata)
+                .then((response) => {
+                    console.log("Server response: ", response.data);
+                })
+                .catch((error) => {
+                    console.error("Error updating details: ", error);
+                });
+
+            // Save the updated details back to localStorage
+            localStorage.setItem('firstname', updatedFirstname);
+            localStorage.setItem('middlename', updatedMiddlename);
+            localStorage.setItem('lastname', updatedLastname);
+            localStorage.setItem('email', updatedEmail);
+            localStorage.setItem('cpnumber', updatedCpnumber);
+            localStorage.setItem('username', updatedUsername);
+            localStorage.setItem('password', updatedPassword);
+
+            // Hide the update details form after submission
+            document.getElementById('update-details-form-container').style.display = 'none';
+        }
+
+        function cancelUpdate() {
+            // Hide the update details form if the user cancels
+            document.getElementById('update-details-form-container').style.display = 'none';
+        }
+
+    </script>
+</body>
+
+</html>

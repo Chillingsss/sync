@@ -202,16 +202,28 @@ function updateDetails() {
     var updatedFirstname = document.getElementById("updated-firstname").value;
     var updatedMiddlename = document.getElementById("updated-middlename").value;
     var updatedLastname = document.getElementById("updated-lastname").value;
+    var updatedEmail = document.getElementById("updated-email").value;
+    var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+    var updatedUsername = document.getElementById("updated-username").value;
+    var updatedPassword = document.getElementById("updated-password").value;
 
     // Update the displayed user details
     document.getElementById("firstname").innerHTML = updatedFirstname;
     document.getElementById("middlename").innerHTML = updatedMiddlename;
     document.getElementById("lastname").innerHTML = updatedLastname;
+    document.getElementById("email").innerHTML = updatedEmail;
+    document.getElementById("cpnumber").innerHTML = updatedCpnumber;
+    document.getElementById("username").innerHTML = updatedUsername;
+    document.getElementById("password").innerHTML = updatedPassword;
 
     const jsonData = {
         "updated-firstname": updatedFirstname,
         "updated-middlename": updatedMiddlename,
-        "updated-lastname": updatedLastname
+        "updated-lastname": updatedLastname,
+        "updated-email": updatedEmail,
+        "updated-cpnumber": updatedCpnumber,
+        "updated-username": updatedUsername,
+        "updated-password": updatedPassword
     };
 
     const formdata = new FormData();
@@ -231,6 +243,10 @@ function updateDetails() {
     localStorage.setItem('firstname', updatedFirstname);
     localStorage.setItem('middlename', updatedMiddlename);
     localStorage.setItem('lastname', updatedLastname);
+    localStorage.setItem('email', updatedEmail);
+    localStorage.setItem('cpnumber', updatedCpnumber);
+    localStorage.setItem('username', updatedUsername);
+    localStorage.setItem('password', updatedPassword);
 
     // Hide the update details form after submission
     document.getElementById('update-details-form-container').style.display = 'none';
@@ -273,3 +289,81 @@ function logout() {
             console.error("Logout request failed. Error: ", error);
         });
 }
+
+function fetchUserDetails() {
+    // Make a GET request to fetch user details
+    axios.get('http://localhost/sync/PHP/fetch_user_details.php')
+        .then(response => {
+            const userData = response.data;
+
+            // Display the user details in the modal
+            document.getElementById("firstname").textContent = userData.firstname;
+            document.getElementById("middlename").textContent = userData.middlename;
+            document.getElementById("lastname").textContent = userData.lastname;
+            document.getElementById("email").textContent = userData.email;
+            document.getElementById("cpnumber").textContent = userData.cpnumber;
+            document.getElementById("username").textContent = userData.username;
+            document.getElementById("password").textContent = userData.password; // Note: Consider not displaying the password
+        })
+        .catch(error => {
+            console.error('Error fetching user details:', error);
+        });
+}
+
+// Assume this code is in your main JavaScript file (e.g., js/index.js)
+// document.addEventListener("DOMContentLoaded", function () {
+//     // Fetch user details and update the modal content
+//     axios.get('http://localhost/sync/PHP/fetch_user_details.php')
+//         .then(response => {
+//             const userData = response.data;
+
+//             // Update the modal content with user details
+//             document.getElementById("userFirstname").textContent = userData.firstname;
+//             // Add more lines to update other elements as needed
+
+//             // Optional: You can also update the content inside the modal
+//             document.getElementById("userDetailsContent").innerHTML = `
+//                 <p><strong>First Name:</strong> ${userData.firstname}</p>
+//                 <p><strong>Middle Name:</strong> ${userData.middlename}</p>
+//                 <p><strong>Last Name:</strong> ${userData.lastname}</p>
+//                 <p><strong>Email:</strong> ${userData.email}</p>
+//                 <p><strong>Contact Number:</strong> ${userData.cpnumber}</p>
+//                 <p><strong>Username:</strong> ${userData.username}</p>
+//                 <p><strong>Password:</strong> ${userData.password}</p>
+
+//             `;
+//         })
+//         .catch(error => {
+//             console.error('Error fetching user details:', error);
+//         });
+// });
+
+
+// Function to fetch user details using Axios
+// function fetchUserDetails() {
+//     axios.get('your_server_endpoint_for_user_details')
+//         .then(response => {
+//             const userData = response.data;
+//             console.log('User data:', userData) // Assuming your user details are in the response.data
+
+//             // Update the content of the spans with the received user data
+//             document.getElementById("firstname").textContent = userData.firstname;
+//             document.getElementById("middlename").textContent = userData.middlename;
+//             document.getElementById("lastname").textContent = userData.lastname;
+//             document.getElementById("email").textContent = userData.email;
+//             document.getElementById("cpnumber").textContent = userData.cpnumber;
+//             document.getElementById("username").textContent = userData.username;
+//             document.getElementById("password").textContent = userData.password;
+//         })
+//         .catch(error => {
+//             console.error('Error fetching user details:', error);
+//         });
+// }
+
+// // Call the function to fetch and display user details
+// fetchUserDetails();
+function openUpdateDetailsModal() {
+    $('#userDetailsModal').modal('hide'); // Hide the user details modal
+    $('#updateDetailsModal').modal('show'); // Show the update details modal
+}
+

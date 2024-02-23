@@ -214,7 +214,7 @@ function loginUser() {
                     passwordInput.style.borderColor = 'red';
                 } else {
                     localStorage.setItem("id", response.data.data[0].id);
-                    sessionStorage.setItem("id", response.data.data[0].id);
+                    sessionStorage.setItem("userId", response.data.data[0].id);
                     localStorage.setItem("firstname", response.data.data[0].firstname);
                     localStorage.setItem("middlename", response.data.data[0].middlename);
                     localStorage.setItem("lastname", response.data.data[0].lastname);

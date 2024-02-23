@@ -40,6 +40,10 @@
                <a class="nav-link" href="profile.html"
                   style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
             </li>
+            <button type="button" class="btn btn-outline-secondary mb-4" style="margin-top:20px;" data-toggle="modal"
+               data-target="#userDetailsModal">
+               User Details
+            </button>
             <li class="nav-item">
                <a class="nav-link"
                   style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
@@ -49,6 +53,27 @@
       </div>
    </nav>
 
+   <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content" style="background-color: #242526; border-radius:20px;">
+            <div class="modal-header">
+               <h5 class="modal-title text-white" id="userDetailsModalLabel">User Details</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body text-white" id="userDetailsContent">
+               <!-- This div will be populated with the user details content -->
+
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary" onclick="openUpdateDetailsModal()">Update</button>
+            </div>
+         </div>
+      </div>
+   </div>
 
 
    <div class="row-md-5 mb-3 ">
@@ -106,6 +131,8 @@
       </div>
    </div>
 
+
+
    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
@@ -124,6 +151,36 @@
    </div>
 
    <script src="js/index.js"></script>
+
+   <script>
+      document.addEventListener("DOMContentLoaded", function () {
+         axios.get('http://localhost/sync/PHP/fetch_user_details.php')
+            .then(response => {
+               console.log('User details response:', response.data); // Log the response
+               const userData = response.data;
+
+               // Update the modal content with user details
+               document.getElementById("userFirstname").textContent = userData.firstname;
+               // Add more lines to update other elements as needed
+
+               // Optional: You can also update the content inside the modal
+               document.getElementById("userDetailsContent").innerHTML = `
+            <p><strong>First Name:</strong> ${userData.firstname}</p>
+            <p><strong>Middle Name:</strong> ${userData.middlename}</p>
+            <p><strong>Last Name:</strong> ${userData.lastname}</p>
+            <p><strong>Email:</strong> ${userData.email}</p>
+            <p><strong>Contact Number:</strong> ${userData.cpnumber}</p>
+            <p><strong>Username:</strong> ${userData.username}</p>
+            <p><strong>Password:</strong> ${userData.password}</p>
+         `;
+            })
+            .catch(error => {
+               console.error('Error fetching user details:', error);
+            });
+      });
+
+
+   </script>
 </body>
 
 </html>
