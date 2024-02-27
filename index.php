@@ -28,8 +28,7 @@
 
       <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
 
-      <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNav"
-         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
          <img src="img/menu.png" alt="Toggle Navigation" style="width: 40px; height: 40px;">
       </button>
 
@@ -37,24 +36,19 @@
          <ul class="navbar-nav ml-auto">
 
             <li class="nav-item">
-               <a class="nav-link" href="profile.html"
-                  style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
+               <a class="nav-link" href="profile.html" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
             </li>
-            <button type="button" class="btn btn-outline-secondary mb-4" style="margin-top:20px;" data-toggle="modal"
-               data-target="#userDetailsModal">
+            <button type="button" class="btn btn-outline-secondary mb-4" style="margin-top:20px;" data-toggle="modal" data-target="#userDetailsModal">
                User Details
             </button>
             <li class="nav-item">
-               <a class="nav-link"
-                  style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
-                  onclick="logout()">Logout</a>
+               <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">Logout</a>
             </li>
          </ul>
       </div>
    </nav>
 
-   <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel"
-      aria-hidden="true">
+   <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
          <div class="modal-content" style="background-color: #242526; border-radius:20px;">
             <div class="modal-header">
@@ -80,14 +74,12 @@
 
       <div class="col-md-3 justify-content-center d-flex align-items-center mx-auto mb-4">
          <!-- Button to trigger modal -->
-         <button type="button" class="btn btn-outline-secondary  mb-4" style="margin-top:80px;" data-toggle="modal"
-            data-target="#postModal">
+         <button type="button" class="btn btn-outline-secondary  mb-4" style="margin-top:80px;" data-toggle="modal" data-target="#postModal">
             What's on your mind?
          </button>
 
          <!-- Modal -->
-         <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel"
-            aria-hidden="true">
+         <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                <div class="modal-content" style="background-color: #242526; border-radius:20px;">
                   <div class="modal-header">
@@ -106,16 +98,14 @@
                            <!-- Display selected image -->
                            <label for="file" style="cursor: pointer;">
                               <span style="color: #E4E6EB;">Choose File </span>
-                              <img id="previewImage" src="#" alt="Selected Image"
-                                 style="max-width: 100%; max-height: 200px; border-radius:30px" />
+                              <img id="previewImage" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; border-radius:30px" />
 
                            </label>
                         </div>
 
                         <div class="form-group">
                            <label for="caption">Caption:</label>
-                           <textarea class="form-control" id="caption" name="caption" placeholder="What's on your mind?"
-                              style="background-color: #242526; color: #E4E6EB;"></textarea>
+                           <textarea class="form-control" id="caption" name="caption" placeholder="What's on your mind?" style="background-color: #242526; color: #E4E6EB;"></textarea>
                         </div>
                      </form>
                   </div>
@@ -133,8 +123,7 @@
 
 
 
-   <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
-      aria-hidden="true">
+   <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-lg" role="document">
          <div class="modal-content" style="background-color: #242526;">
             <div class="modal-header">
@@ -153,33 +142,39 @@
    <script src="js/index.js"></script>
 
    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-         axios.get('http://localhost/sync/PHP/fetch_user_details.php')
-            .then(response => {
-               console.log('User details response:', response.data); // Log the response
-               const userData = response.data;
+      document.addEventListener("DOMContentLoaded", function() {
+         console.log("damn");
+         const userId = sessionStorage.getItem('userId');
 
-               // Update the modal content with user details
-               document.getElementById("userFirstname").textContent = userData.firstname;
-               // Add more lines to update other elements as needed
+         // Check if userId is available before making the request
+         if (userId) {
+            axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+               .then(response => {
+                  console.log('User details response:', response.data);
+                  const userData = response.data;
 
-               // Optional: You can also update the content inside the modal
-               document.getElementById("userDetailsContent").innerHTML = `
-            <p><strong>First Name:</strong> ${userData.firstname}</p>
-            <p><strong>Middle Name:</strong> ${userData.middlename}</p>
-            <p><strong>Last Name:</strong> ${userData.lastname}</p>
-            <p><strong>Email:</strong> ${userData.email}</p>
-            <p><strong>Contact Number:</strong> ${userData.cpnumber}</p>
-            <p><strong>Username:</strong> ${userData.username}</p>
-            <p><strong>Password:</strong> ${userData.password}</p>
-         `;
-            })
-            .catch(error => {
-               console.error('Error fetching user details:', error);
-            });
+                  // Update the modal content with user details
+                  document.getElementById("userFirstname").textContent = userData.firstname;
+                  // Add more lines to update other elements as needed
+
+                  // Optional: You can also update the content inside the modal
+                  document.getElementById("userDetailsContent").innerHTML = `
+                    <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
+                    <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
+                    <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
+                    <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
+                    <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
+                    <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
+                    <p><strong>Password:</strong> ${localStorage.getItem("password")}</p>
+                `;
+               })
+               .catch(error => {
+                  console.error('Error fetching user details:', error);
+               });
+         } else {
+            console.error('userId not available');
+         }
       });
-
-
    </script>
 </body>
 

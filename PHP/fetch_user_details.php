@@ -20,8 +20,8 @@ if (!$connection) {
 }
 
 // Check if the user is logged in
-if (isset($_SESSION['id'])) {
-    $loggedInUserId = $_SESSION['id'];
+if (isset($_SESSION['userId'])) {
+    $loggedInUserId = $_SESSION['userId'];
 
     // Query the database to get user details
     $query = "SELECT * FROM tbl_users WHERE id = $loggedInUserId"; // Adjust the query based on your database schema
