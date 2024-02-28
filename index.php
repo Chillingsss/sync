@@ -37,7 +37,7 @@
 
             <li class="nav-item dropdown ">
                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
-                  Users
+                  Setting
                </a>
                <!-- Dropdown menu -->
                <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
