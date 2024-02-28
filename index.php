@@ -35,12 +35,19 @@
       <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav ml-auto">
 
-            <li class="nav-item">
-               <a class="nav-link" href="profile.html" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
+            <li class="nav-item dropdown ">
+               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
+                  User
+               </a>
+               <!-- Dropdown menu -->
+               <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
+                  <a class="dropdown-item bg-transparent" style="text-decoration: none; color:#E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;" data-toggle="modal" data-target="#userDetailsModal">
+                     User Details
+                  </a>
+
+               </div>
             </li>
-            <button type="button" class="btn btn-outline-secondary mb-4" style="margin-top:20px;" data-toggle="modal" data-target="#userDetailsModal">
-               User Details
-            </button>
+
             <li class="nav-item">
                <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">Logout</a>
             </li>
@@ -58,7 +65,6 @@
                </button>
             </div>
             <div class="modal-body text-white" id="userDetailsContent">
-               <!-- This div will be populated with the user details content -->
 
             </div>
             <div class="modal-footer">
