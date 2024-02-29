@@ -35,7 +35,8 @@ if (!empty($_FILES['file']['name'])) {
         if ($fileError === 0) {
             if ($fileSize < 1000000) { // Adjust the file size limit as needed
                 $fileNameNew = uniqid('', true) . "." . $fileActualExt;
-                $fileDestination = 'uploads/' . $fileNameNew;
+                // $fileDestination = 'uploads/' . $fileNameNew;
+                $fileDestination = '/var/www/html/sync/uploads/' . $fileNameNew;
                 if (move_uploaded_file($fileTmpName, $fileDestination)) {
                     $sql = "INSERT INTO uploads (filename, caption, userID) VALUES (:filename, :caption, :userID)";
                     $stmt = $conn->prepare($sql);
@@ -81,4 +82,3 @@ if (!empty($_FILES['file']['name'])) {
 }
 
 $conn = null;
-?>

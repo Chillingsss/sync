@@ -69,7 +69,53 @@
             </div>
             <div class="modal-footer">
                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-               <button type="button" class="btn btn-primary" onclick="openUpdateDetailsModal()">Update</button>
+               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateDetailsModal">Update Details</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div class="modal fade" id="updateDetailsModal" tabindex="-1" role="dialog" aria-labelledby="updateDetailsModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content" style="background-color: #242526; border-radius:20px;">
+            <div class="modal-header">
+               <h5 class="modal-title text-white" id="updateDetailsModalLabel">Update User Details</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+               <form id="updateDetailsForm">
+                  <div class="form-group">
+                     <label for="updated-firstname">First Name:</label>
+                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated first name">
+                  </div>
+                  <div class="form-group">
+                     <label for="updated-middlename">Middle Name:</label>
+                     <input type="text" class="form-control" id="updated-middlename" placeholder="Enter updated middle name">
+                  </div>
+                  <div class="form-group">
+                     <label for="updated-lastname">Last Name:</label>
+                     <input type="text" class="form-control" id="updated-lastname" placeholder="Enter updated last name">
+                  </div>
+                  <div class="form-group">
+                     <label for="updated-email">Email:</label>
+                     <input type="email" class="form-control" id="updated-email" placeholder="Enter updated email">
+                  </div>
+                  <div class="form-group">
+                     <label for="updated-cpnumber">Contact Number:</label>
+                     <input type="tel" class="form-control" id="updated-cpnumber" placeholder="Enter updated contact number">
+                  </div>
+                  <div class="form-group">
+                     <label for="updated-username">Username:</label>
+                     <input type="text" class="form-control" id="updated-username" placeholder="Enter updated username">
+                  </div>
+                  <div class="form-group">
+                     <label for="updated-password">Password:</label>
+                     <input type="password" class="form-control" id="updated-password" placeholder="Enter updated password">
+                  </div>
+                  <button type="button" class="btn btn-primary" onclick="updateDetails()">Save Changes</button>
+               </form>
             </div>
          </div>
       </div>
@@ -79,7 +125,7 @@
    <div class="row-md-5 mb-3 ">
 
       <div class="col-md-3 justify-content-center d-flex align-items-center mx-auto mb-4">
-         <!-- Button to trigger modal -->
+
          <button type="button" class="btn btn-outline-secondary  mb-4" style="margin-top:80px;" data-toggle="modal" data-target="#postModal">
             What's on your mind?
          </button>
@@ -146,42 +192,6 @@
    </div>
 
    <script src="js/index.js"></script>
-
-   <script>
-      document.addEventListener("DOMContentLoaded", function() {
-         console.log("damn");
-         const userId = sessionStorage.getItem('userId');
-
-         // Check if userId is available before making the request
-         if (userId) {
-            axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
-               .then(response => {
-                  console.log('User details response:', response.data);
-                  const userData = response.data;
-
-                  // Update the modal content with user details
-                  document.getElementById("userFirstname").textContent = userData.firstname;
-                  // Add more lines to update other elements as needed
-
-                  // Optional: You can also update the content inside the modal
-                  document.getElementById("userDetailsContent").innerHTML = `
-                    <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
-                    <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
-                    <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
-                    <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
-                    <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
-                    <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
-                    <p><strong>Password:</strong> ${localStorage.getItem("password")}</p>
-                `;
-               })
-               .catch(error => {
-                  console.error('Error fetching user details:', error);
-               });
-         } else {
-            console.error('userId not available');
-         }
-      });
-   </script>
 </body>
 
 </html>

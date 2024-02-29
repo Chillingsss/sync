@@ -3,23 +3,30 @@ session_start();
 
 class Update
 {
-    function update($json)
+    private $conn;
+
+    public function __construct()
     {
-        $json = json_decode($json, true);
+        // Initialize database connection in the constructor
         $servername = "127.0.0.1";
         $username = "root";
-        $password = "pelino"; // If you haven't set a password, leave it empty
+        $password = "pelino";
         $database = "db_socialmedia";
 
-        $conn = new mysqli($servername, $username, $password, $database);
+        $this->conn = new mysqli($servername, $username, $password, $database);
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+        if ($this->conn->connect_error) {
+            die("Connection failed: " . $this->conn->connect_error);
         }
+    }
+
+    public function update($json)
+    {
+        $json = json_decode($json, true);
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Check if user is logged in
-            if (isset($_SESSION["userDetails"])) {
+            // Check if the user is logged in
+            if (isset($_SESSION["userDetails"]["id"])) {
                 $userId = $_SESSION["userDetails"]["id"];
 
                 // Get updated details from the POST data
@@ -31,23 +38,33 @@ class Update
                 $updatedUsername = $json["updated-username"];
                 $updatedPassword = $json["updated-password"];
 
-                // Update user details in the database using prepared statement
-                $stmt = $conn->prepare("UPDATE tbl_users SET firstname=?, middlename=?, lastname=?, email=?, cpnumber=?, username=?, password=? WHERE id=?");
-                $stmt->bind_param("sssi", $updatedFirstname, $updatedMiddlename, $updatedLastname, $updatedEmail, $updatedCpnumber, $updatedUsername, $updatedPassword, $userId);
+                // Use prepared statement to update user details
+                $stmt = $this->conn->prepare("UPDATE tbl_users SET firstname=?, middlename=?, lastname=?, email=?, cpnumber=?, username=?, password=? WHERE id=?");
+                $stmt->bind_param("ssssisss", $updatedFirstname, $updatedMiddlename, $updatedLastname, $updatedEmail, $updatedCpnumber, $updatedUsername, $updatedPassword, $userId);
 
+                // Check for errors in binding parameters
+                if ($stmt->error) {
+                    return json_encode(array("status" => -1, "message" => "Error binding parameters: " . $stmt->error));
+                }
+
+                // Execute the statement
                 if ($stmt->execute()) {
-                    echo "Details updated successfully";
+                    return json_encode(array("status" => 1, "message" => "Details updated successfully"));
                 } else {
-                    echo "Error updating details: " . $stmt->error;
+                    return json_encode(array("status" => -1, "message" => "Error updating details: " . $stmt->error));
                 }
 
                 $stmt->close();
             } else {
-                echo "User not logged in";
+                return json_encode(array("status" => -1, "message" => "User not logged in"));
             }
         }
+    }
 
-        $conn->close();
+    public function __destruct()
+    {
+        // Close the database connection in the destructor
+        $this->conn->close();
     }
 }
 
@@ -55,6 +72,7 @@ $operation = isset($_POST["operation"]) ? $_POST["operation"] : "Invalid";
 $json = isset($_POST["json"]) ? $_POST["json"] : "";
 
 $data = new Update();
+
 switch ($operation) {
     case "update":
         echo $data->update($json);
