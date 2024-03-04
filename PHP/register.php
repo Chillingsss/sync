@@ -37,10 +37,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $response["message"] = "Error: " . $sql . "<br>" . $conn->error;
         $response["query"] = $sql; // Add the actual query to the response for debugging
     }
-
 }
 
 echo json_encode($response); // Send JSON response
 
 $conn->close();
-?>

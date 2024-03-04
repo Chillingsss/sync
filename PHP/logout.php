@@ -8,4 +8,3 @@ session_destroy();
 $response = array('status' => 'success');
 header('Content-Type: application/json');
 echo json_encode($response);
-?>

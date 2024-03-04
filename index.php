@@ -192,6 +192,91 @@
    </div>
 
    <script src="js/index.js"></script>
+
+   <script>
+      function openUpdateDetailsModal() {
+         $('#userDetailsModal').modal('hide'); // Hide the user details modal
+         $('#updateDetailsModal').modal('show'); // Show the update details modal
+      }
+
+
+      document.addEventListener("DOMContentLoaded", function() {
+         console.log("damn");
+         const userId = sessionStorage.getItem('userId');
+
+         // Check if userId is available before making the request
+         if (userId) {
+            axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+               .then(response => {
+                  console.log('User details response:', response.data);
+                  const userData = response.data;
+
+                  // Update the modal content with user details
+                  document.getElementById("userFirstname").textContent = userData.firstname;
+                  // Add more lines to update other elements as needed
+
+                  // Optional: You can also update the content inside the modal
+                  document.getElementById("userDetailsContent").innerHTML = `
+               <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
+               <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
+               <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
+               <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
+               <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
+               <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
+               <p><strong>Password:</strong> ${localStorage.getItem("password")}</p>
+           `;
+               })
+               .catch(error => {
+                  console.error('Error fetching user details:', error);
+               });
+         } else {
+            console.error('userId not available');
+         }
+      });
+
+      function openUpdateDetailsForm() {
+         // Display the update details form
+         document.getElementById('update-details-form-container').style.display = 'block';
+      }
+
+      function updateDetails() {
+         console.log("update");
+         // Get updated details from the form
+         var updatedFirstname = document.getElementById("updated-firstname").value;
+         var updatedMiddlename = document.getElementById("updated-middlename").value;
+         var updatedLastname = document.getElementById("updated-lastname").value;
+         var updatedEmail = document.getElementById("updated-email").value;
+         var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+         var updatedUsername = document.getElementById("updated-username").value;
+         var updatedPassword = document.getElementById("updated-password").value;
+
+         // Create a JSON object with the updated details
+         var jsonData = {
+            "updated-firstname": updatedFirstname,
+            "updated-middlename": updatedMiddlename,
+            "updated-lastname": updatedLastname,
+            "updated-email": updatedEmail,
+            "updated-cpnumber": updatedCpnumber,
+            "updated-username": updatedUsername,
+            "updated-password": updatedPassword
+         };
+
+         // Send the update request to the server using Axios
+         axios.post('PHP/update.php', {
+               operation: 'update',
+               json: JSON.stringify(jsonData)
+            })
+            .then(function(response) {
+               // Handle the response from the server
+               console.log(response.data);
+               // You can perform additional actions here if needed
+            })
+            .catch(function(error) {
+               // Handle errors
+               console.error('Error updating details:', error);
+            });
+      }
+   </script>
 </body>
 
 </html>
