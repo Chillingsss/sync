@@ -14,8 +14,6 @@
    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
-
-
 </head>
 <!-- #E5E4E2; -->
 
@@ -23,7 +21,7 @@
 
    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
       <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
-         <img src="img/sync.png" alt="Sync Logo" style="height: 50px; width: 100px;">
+         <img src="img/sync.png" alt="Sync Logo" style="height: 40px; width: 90px;">
       </a>
 
       <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
@@ -34,22 +32,21 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav ml-auto">
-
             <li class="nav-item dropdown ">
                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
-                  Setting
+                  <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
                </a>
-               <!-- Dropdown menu -->
+
                <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
                   <a class="dropdown-item bg-transparent" style="text-decoration: none; color:#E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;" data-toggle="modal" data-target="#userDetailsModal">
                      User Details
                   </a>
-
                </div>
             </li>
 
             <li class="nav-item">
-               <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">Logout</a>
+               <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">
+                  <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;"></a>
             </li>
          </ul>
       </div>
@@ -135,6 +132,7 @@
             <div class="modal-dialog" role="document">
                <div class="modal-content" style="background-color: #242526; border-radius:20px;">
                   <div class="modal-header">
+
                      <h5 class="modal-title" id="postModalLabel" style="color: #E4E6EB;">Create a Post</h5>
                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -194,6 +192,8 @@
    <script src="js/index.js"></script>
 
    <script>
+      fetchUserDetails();
+
       function openUpdateDetailsModal() {
          $('#userDetailsModal').modal('hide'); // Hide the user details modal
          $('#updateDetailsModal').modal('show'); // Show the update details modal

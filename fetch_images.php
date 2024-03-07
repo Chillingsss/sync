@@ -11,7 +11,7 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// $sql = "SELECT FROM uploads ORDER BY upload_date DESC";
+
 $sql = "SELECT 
         uploads.id,
         uploads.filename,
@@ -31,4 +31,3 @@ header('Content-Type: application/json');
 echo json_encode($posts);
 
 $conn = null;
-?>

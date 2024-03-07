@@ -11,7 +11,6 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
-// Assuming postId is passed as a parameter (you should validate and sanitize it)
 $postId = $_GET['postId'];
 
 $sql = "SELECT 
@@ -23,7 +22,7 @@ $sql = "SELECT
         tbl_users.firstname
         FROM posts
         INNER JOIN tbl_users ON tbl_users.id = posts.userID
-        WHERE posts.id = :postId";  // Add a WHERE clause to filter by postId
+        WHERE posts.id = :postId";
 $stmt = $conn->prepare($sql);
 $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
 $stmt->execute();
@@ -42,4 +41,3 @@ if ($postDetails) {
 }
 
 $conn = null;
-?>
