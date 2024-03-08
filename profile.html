@@ -31,14 +31,12 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-
-                <li class="nav-item dropdown ">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                <li class="nav-item dropdown " style="margin-right: 15px; margin-top: 5px;">
+                    <a class=" nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                         <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
                     </a>
-
                     <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
                         <a class="dropdown-item bg-transparent"
                             style="text-decoration: none; color:#E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;"
@@ -48,21 +46,20 @@
                     </div>
                 </li>
 
-                <li class="nav-item">
+                <li class="nav-item" style="margin-right: 15px; margin-top: 5px;">
                     <a class="nav-link" href="profile.html"
                         style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
-                        <img src="img/account.png" alt="Setting Icon" style="width: 120px; height: 40px;"></a>
+                        <img src="img/profile.png" alt="Setting Icon" style="width: 100px; height: 25px;">
+                    </a>
                 </li>
 
                 <li class="nav-item">
                     <a class="nav-link"
                         style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
                         onclick="logout()">
-                        <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;"></a>
+                        <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
+                    </a>
                 </li>
-
-
-
             </ul>
         </div>
     </nav>
@@ -130,7 +127,34 @@
 
 
     <script>
-        // Include your JavaScript code here
+        async function deletePost(postId) {
+            try {
+                const jsonData = {
+                    postId: postId
+                };
+                const formData = new FormData();
+                formData.append("operation", "deletePost");
+                formData.append("json", JSON.stringify(jsonData));
+
+                if (confirm('Are you sure you want to delete this post?')) {
+                    const res = await axios.post('http://localhost/sync/PHP/login.php', formData);
+                    console.log("RESPONSE NAKO NI", res);
+
+                    if (res.data === 1) {
+                        console.log('Post deleted successfully:', res);
+                        fetchUserPosts();
+                    } else {
+                        console.error('Error deleting post:', res.message);
+                    }
+                }
+            } catch (error) {
+                console.error('Error deleting post:', error);
+            }
+        }
+
+
+
+
         function formatTimestamp(timestamp) {
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
             return new Date(timestamp).toLocaleDateString('en-US', options);
@@ -157,14 +181,16 @@
                             const cardHtml = `
                         <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
                             <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
-                            <a href="#" onclick="openPostDetails(${post.postId})">
+                    
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
-                            </a>
+                           
                             <div style="text-align: right;" class="small text-muted">${formatTimestamp(post.upload_date)}</div>
 
                             <div class="text-center mb-4">
                                 <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">"${post.caption}"</div>
                             </div>
+
+                            <button class="btn btn-danger mt-2" onclick="deletePost(${post.id})">Delete</button>
 
                             <!-- Comment Section -->
                             <div>

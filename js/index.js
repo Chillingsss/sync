@@ -69,9 +69,9 @@ function fetchImages() {
                         <a href="#" onclick="openUserPostsModal(${post.userID})" style="text-decoration: none; color: #E4E6EB;">
                         <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem;">${post.firstname}</div>
                     </a>
-                            <a href="#" onclick="openPostDetails(${post.postId})">
+                            
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
-                            </a>
+                          
                             <div style="text-align: right;" class="small text-muted">${formatTimestamp(post.upload_date)}</div>
 
                             <div class="text-center mb-4">
@@ -106,32 +106,32 @@ function fetchImages() {
         });
 }
 
-function openPostDetails(postId) {
-    // Fetch the detailed post information
-    fetch(`fetch_post_details.php?postId=${postId}`)
-        .then(response => response.json())
-        .then(postDetails => {
-            // Populate the modal with post details
-            const postDetailsContainer = document.getElementById('postDetails');
-            postDetailsContainer.innerHTML = '';
+// function openPostDetails(postId) {
+//     // Fetch the detailed post information
+//     fetch(`fetch_post_details.php?postId=${postId}`)
+//         .then(response => response.json())
+//         .then(postDetails => {
+//             // Populate the modal with post details
+//             const postDetailsContainer = document.getElementById('postDetails');
+//             postDetailsContainer.innerHTML = '';
 
-            // Display the detailed information (customize this part based on your data structure)
-            postDetailsContainer.innerHTML = `
-                <div>
-                    <h4>${postDetails.firstname}'s Post</h4>
-                    <img src="uploads/${postDetails.filename}" alt="Uploaded Image" class="img-fluid">
-                    <p>${postDetails.caption}</p>
-                    <p>Posted on: ${formatTimestamp(postDetails.upload_date)}</p>
-                </div>
-            `;
+//             // Display the detailed information (customize this part based on your data structure)
+//             postDetailsContainer.innerHTML = `
+//                 <div>
+//                     <h4>${postDetails.firstname}'s Post</h4>
+//                     <img src="uploads/${postDetails.filename}" alt="Uploaded Image" class="img-fluid">
+//                     <p>${postDetails.caption}</p>
+//                     <p>Posted on: ${formatTimestamp(postDetails.upload_date)}</p>
+//                 </div>
+//             `;
 
-            // Show the modal
-            $('#imageModal').modal('show');
-        })
-        .catch(error => {
-            console.error('Error fetching post details:', error);
-        });
-}
+//             // Show the modal
+//             $('#imageModal').modal('show');
+//         })
+//         .catch(error => {
+//             console.error('Error fetching post details:', error);
+//         });
+// }
 
 
 function openUserPostsModal(userID) {

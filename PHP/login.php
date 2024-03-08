@@ -156,6 +156,25 @@ class Data
         $stmt->execute();
         return $stmt->rowCount() > 0 ? json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)) : 0;
     }
+
+    function deletePost($json)
+    {
+        try {
+            include "connection.php";
+            $json = json_decode($json, true);
+
+            $postId = $json['postId'];
+
+            $sql = "DELETE FROM uploads WHERE id = :postId";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+
+            $stmt->execute();
+            return $stmt->rowCount() > 0 ? 1 : 0;
+        } catch (Exception $e) {
+            return $e;
+        }
+    }
 }
 
 $operation = isset($_POST["operation"]) ? $_POST["operation"] : "Invalid";
@@ -177,6 +196,9 @@ switch ($operation) {
         break;
     case "getProfile":
         echo $data->getProfile($json);
+        break;
+    case "deletePost":
+        echo $data->deletePost($json); // Call the deletePost function
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));
