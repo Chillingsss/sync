@@ -23,7 +23,6 @@ if (!empty($_FILES['file']['name'])) {
 
     $caption = isset($_POST['caption']) ? $_POST['caption'] : '';
 
-    // Retrieve userID from POST data
     $userID = isset($_POST['userID']) ? $_POST['userID'] : '';
 
     $fileExt = explode('.', $fileName);

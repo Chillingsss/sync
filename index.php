@@ -21,7 +21,7 @@
 
    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
       <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
-         <img src="img/sync.png" alt="Sync Logo" style="height: 40px; width: 90px;">
+         <img src="img/sync.png" alt="Sync Logo" style="height: 50px; width: 100px;">
       </a>
 
       <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
@@ -33,9 +33,6 @@
       <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav ml-auto">
 
-            <li class="nav-item">
-               <a class="nav-link" href="profile.html" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
-            </li>
             <li class="nav-item dropdown ">
                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                   <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
@@ -49,9 +46,16 @@
             </li>
 
             <li class="nav-item">
+               <a class="nav-link" href="profile.html" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
+                  <img src="img/account.png" alt="Setting Icon" style="width: 120px; height: 40px;"></a>
+            </li>
+
+            <li class="nav-item">
                <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">
                   <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;"></a>
             </li>
+
+
          </ul>
       </div>
    </nav>
@@ -195,6 +199,25 @@
       </div>
    </div>
 
+
+   <div class="modal fade" id="userPostsModal" tabindex="-1" role="dialog" aria-labelledby="userPostsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+         <div class="modal-content" style="background-color: #242526;">
+            <div class="modal-header">
+               <h5 class="modal-title" id="userPostsModalLabel" style="color: #E4E6EB;">User Posts</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body" id="userPostsModalBody">
+               <!-- This div will be populated with the posts of the clicked user -->
+            </div>
+         </div>
+      </div>
+   </div>
+
+
+
    <script src="js/index.js"></script>
 
    <script>
@@ -245,46 +268,46 @@
          document.getElementById('update-details-form-container').style.display = 'block';
       }
 
-       function updateDetails() {
-            console.log("update");
+      function updateDetails() {
+         console.log("update");
 
-            // Get updated details from the form
-            var updatedFirstname = document.getElementById("updated-firstname").value;
-            var updatedMiddlename = document.getElementById("updated-middlename").value;
-            var updatedLastname = document.getElementById("updated-lastname").value;
-            var updatedEmail = document.getElementById("updated-email").value;
-            var updatedCpnumber = document.getElementById("updated-cpnumber").value;
-            var updatedUsername = document.getElementById("updated-username").value;
-            var updatedPassword = document.getElementById("updated-password").value;
+         // Get updated details from the form
+         var updatedFirstname = document.getElementById("updated-firstname").value;
+         var updatedMiddlename = document.getElementById("updated-middlename").value;
+         var updatedLastname = document.getElementById("updated-lastname").value;
+         var updatedEmail = document.getElementById("updated-email").value;
+         var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+         var updatedUsername = document.getElementById("updated-username").value;
+         var updatedPassword = document.getElementById("updated-password").value;
 
-            // Create a FormData object and append the updated details
-            var formData = new FormData();
-            formData.append("operation", "updateDetails"); // Specify the operation
-            formData.append("json", JSON.stringify({
-                "updated-firstname": updatedFirstname,
-                "updated-middlename": updatedMiddlename,
-                "updated-lastname": updatedLastname,
-                "updated-email": updatedEmail,
-                "updated-cpnumber": updatedCpnumber,
-                "updated-username": updatedUsername,
-                "updated-password": updatedPassword,
-                "userId": sessionStorage.getItem("userId")
-            }));
+         // Create a FormData object and append the updated details
+         var formData = new FormData();
+         formData.append("operation", "updateDetails"); // Specify the operation
+         formData.append("json", JSON.stringify({
+            "updated-firstname": updatedFirstname,
+            "updated-middlename": updatedMiddlename,
+            "updated-lastname": updatedLastname,
+            "updated-email": updatedEmail,
+            "updated-cpnumber": updatedCpnumber,
+            "updated-username": updatedUsername,
+            "updated-password": updatedPassword,
+            "userId": sessionStorage.getItem("userId")
+         }));
 
-            // Send the update request to the server using Axios
-            axios.post('http://localhost/sync/PHP/login.php', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
+         // Send the update request to the server using Axios
+         axios.post('http://localhost/sync/PHP/login.php', formData, {
+               headers: {
+                  'Content-Type': 'multipart/form-data'
+               },
             })
-                .then(function (response) {
-                    console.log(response.data);
-                })
-                .catch(function (error) {
-                    // Handle errors
-                    console.error('Error updating details:', error);
-                });
-        }
+            .then(function(response) {
+               console.log(response.data);
+            })
+            .catch(function(error) {
+               // Handle errors
+               console.error('Error updating details:', error);
+            });
+      }
    </script>
 </body>
 

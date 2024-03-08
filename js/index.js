@@ -60,14 +60,15 @@ function fetchImages() {
             imageContainer.innerHTML = '';
 
             data.forEach(post => {
-
+                const userId = post.userId;
                 fetch(`fetch_user.php?userId=${post.userId}`)
                     .then(response => response.json())
                     .then(user => {
-
                         const cardHtml = `
                         <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
-                            <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
+                        <a href="#" onclick="openUserPostsModal(${post.userID})" style="text-decoration: none; color: #E4E6EB;">
+                        <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem;">${post.firstname}</div>
+                    </a>
                             <a href="#" onclick="openPostDetails(${post.postId})">
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
                             </a>
@@ -131,6 +132,14 @@ function openPostDetails(postId) {
             console.error('Error fetching post details:', error);
         });
 }
+
+
+function openUserPostsModal(userID) {
+    console.log("asdasd" + userID);
+    sessionStorage.setItem("idtopost", userID);
+    window.location.href = `userProfile.html?userId=${userID}`;
+}
+
 
 // Function to format timestamp to a readable format (adjust as needed)
 function formatTimestamp(timestamp) {

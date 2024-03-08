@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Uploads</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body class="mt-5" id="body" style="background-color: #0F0F0F">
+
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
+        <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
+            <img src="img/sync.png" alt="Sync Logo" style="height: 50px; width: 100px;">
+        </a>
+
+        <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
+
+        <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <img src="img/menu.png" alt="Toggle Navigation" style="width: 40px; height: 40px;">
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
+                        <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
+                    </a>
+
+                    <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
+                        <a class="dropdown-item bg-transparent"
+                            style="text-decoration: none; color:#E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;"
+                            data-toggle="modal" data-target="#userDetailsModal">
+                            User Details
+                        </a>
+                    </div>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="profile.html"
+                        style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
+                        <img src="img/account.png" alt="Setting Icon" style="width: 120px; height: 40px;"></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link"
+                        style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
+                        onclick="logout()">
+                        <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;"></a>
+                </li>
+
+
+            </ul>
+        </div>
+    </nav>
+
+    <div class="row-md-5 mb-3 ">
+
+        <div class="col-md-3 justify-content-center d-flex align-items-center mx-auto mb-4">
+
+            <button type="button" class="btn btn-outline-secondary  mb-4" style="margin-top:80px;" data-toggle="modal"
+                data-target="#postModal">
+                What's on your mind?
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content" style="background-color: #242526; border-radius:20px;">
+                        <div class="modal-header">
+
+                            <h5 class="modal-title" id="postModalLabel" style="color: #E4E6EB;">Create a Post</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Form inside the modal -->
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <!-- Input for file selection -->
+                                    <input type="file" class="form-control-file" id="file" name="file"
+                                        style="display: none;">
+
+                                    <!-- Display selected image -->
+                                    <label for="file" style="cursor: pointer;">
+                                        <span style="color: #E4E6EB;">Choose File </span>
+                                        <img id="previewImage" src="#" alt="Selected Image"
+                                            style="max-width: 100%; max-height: 200px; border-radius:30px" />
+
+                                    </label>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="caption">Caption:</label>
+                                    <textarea class="form-control" id="caption" name="caption"
+                                        placeholder="What's on your mind?"
+                                        style="background-color: #242526; color: #E4E6EB;"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class=" modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-13 " id="prof">
+        </div>
+
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get the user ID from the query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('userId');
+
+            // Fetch user details
+            fetchUserDetails(userId);
+
+            // Fetch and display user posts
+            fetchUserPosts(userId);
+        });
+
+        function formatTimestamp(timestamp) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+            return new Date(timestamp).toLocaleDateString('en-US', options);
+        }
+
+        function fetchUserDetails(userId) {
+            fetch(`fetch_user.php?userId=${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    // Update the content on userProfile.html with user details
+                    document.getElementById("userFirstname").textContent = user.firstname;
+                    // Add more lines to update other elements as needed
+                })
+                .catch(error => {
+                    console.error('Error fetching user details:', error);
+                });
+        }
+
+        function fetchUserPosts(userId) {
+            const jsonData = {
+                profID: userId
+            }
+            const formData = new FormData();
+            formData.append("operation", "getProfile");
+            formData.append("json", JSON.stringify(jsonData));
+            if (userId) {
+                axios.post(`http://localhost/sync/PHP/login.php`, formData)
+                    .then(response => {
+                        console.log("Response:", response);
+                        const prof = document.getElementById('prof');
+                        prof.innerHTML = '';
+
+                        const posts = response.data;
+                        posts.map(post => {
+                            const cardHtml = `
+                    <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
+                        <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
+                        <a href="#" onclick="openPostDetails(${post.postId})">
+                            ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
+                        </a>
+                        <div style="text-align: right;" class="small text-muted">${formatTimestamp(post.upload_date)}</div>
+
+                        <div class="text-center mb-4">
+                            <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">"${post.caption}"</div>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div>
+                            <ul id="comments-${post.postId}"></ul>
+                            <form onsubmit="addComment(event, ${post.postId})">
+                                <div class="d-flex ml-4 mr-3">
+                                    <input type="text" class="form-control mr-3" style="flex-grow: 1; background-color: #242526;  border-radius: 50px;" id="comment-${post.postId}" placeholder="Add a comment" required>
+                                    <button type="submit" class="btn mr-2">
+                                        <img src="img/comment.png" alt="Sync Comment">
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+
+                            // Append the card HTML to the image container
+                            prof.innerHTML += cardHtml;
+
+                            // Fetch and display comments for each post
+                            // fetchComments(post.postId);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user posts:', error);
+                    });
+            } else {
+                console.error('userId not available');
+            }
+        }
+
+
+        fetchUserPosts();
+
+    </script>
+
+
+</body>
+
+</html>
