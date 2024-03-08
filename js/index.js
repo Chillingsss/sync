@@ -66,7 +66,7 @@ function fetchImages() {
                     .then(user => {
 
                         const cardHtml = `
-                        <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 450px; background-color: #272727;">
+                        <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
                             <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
                             <a href="#" onclick="openPostDetails(${post.postId})">
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
@@ -82,7 +82,7 @@ function fetchImages() {
                                 <ul id="comments-${post.postId}"></ul>
                                 <form onsubmit="addComment(event, ${post.postId})">
                                     <div class="d-flex ml-4 mr-3">
-                                        <input type="text" class="form-control mr-3" style="flex-grow: 1; background-color: #242526; color: #E4E6EB; border-radius: 50px;" id="comment-${post.postId}" placeholder="Add a comment" required>
+                                        <input type="text" class="form-control mr-3" style="flex-grow: 1; background-color: #242526;  border-radius: 50px;" id="comment-${post.postId}" placeholder="Add a comment" required>
                                         <button type="submit" class="btn mr-2">
                                             <img src="img/comment.png" alt="Sync Comment">
                                         </button>

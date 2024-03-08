@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["reg-email"];
     $cpnumber = $_POST["reg-cpnumber"];
     $username = $_POST["reg-username"];
-    $password = password_hash($_POST["reg-password"], PASSWORD_DEFAULT);
+    $password = $_POST["reg-password"];
     $retypePassword = $_POST['reg-retype-password'];
 
     $sql = "INSERT INTO tbl_users (firstname, middlename, lastname, email, cpnumber, username, password)

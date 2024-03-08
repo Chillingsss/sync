@@ -32,6 +32,10 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav ml-auto">
+
+            <li class="nav-item">
+               <a class="nav-link" href="profile.html" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">Profile</a>
+            </li>
             <li class="nav-item dropdown ">
                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                   <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
@@ -82,7 +86,7 @@
                </button>
             </div>
             <div class="modal-body">
-               <form id="updateDetailsForm">
+               <form id="updateDetailsForm" onclick="updateDetails()">
                   <div class="form-group">
                      <label for="updated-firstname">First Name:</label>
                      <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated first name">
@@ -111,7 +115,7 @@
                      <label for="updated-password">Password:</label>
                      <input type="password" class="form-control" id="updated-password" placeholder="Enter updated password">
                   </div>
-                  <button type="button" class="btn btn-primary" onclick="updateDetails()">Save Changes</button>
+                  <button type="button" class="btn btn-primary">Save Changes</button>
                </form>
             </div>
          </div>
@@ -167,8 +171,10 @@
             </div>
          </div>
       </div>
+
       <div class="col-md-13 " id="imageContainer">
       </div>
+
    </div>
 
 
@@ -239,43 +245,46 @@
          document.getElementById('update-details-form-container').style.display = 'block';
       }
 
-      function updateDetails() {
-         console.log("update");
-         // Get updated details from the form
-         var updatedFirstname = document.getElementById("updated-firstname").value;
-         var updatedMiddlename = document.getElementById("updated-middlename").value;
-         var updatedLastname = document.getElementById("updated-lastname").value;
-         var updatedEmail = document.getElementById("updated-email").value;
-         var updatedCpnumber = document.getElementById("updated-cpnumber").value;
-         var updatedUsername = document.getElementById("updated-username").value;
-         var updatedPassword = document.getElementById("updated-password").value;
+       function updateDetails() {
+            console.log("update");
 
-         // Create a JSON object with the updated details
-         var jsonData = {
-            "updated-firstname": updatedFirstname,
-            "updated-middlename": updatedMiddlename,
-            "updated-lastname": updatedLastname,
-            "updated-email": updatedEmail,
-            "updated-cpnumber": updatedCpnumber,
-            "updated-username": updatedUsername,
-            "updated-password": updatedPassword
-         };
+            // Get updated details from the form
+            var updatedFirstname = document.getElementById("updated-firstname").value;
+            var updatedMiddlename = document.getElementById("updated-middlename").value;
+            var updatedLastname = document.getElementById("updated-lastname").value;
+            var updatedEmail = document.getElementById("updated-email").value;
+            var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+            var updatedUsername = document.getElementById("updated-username").value;
+            var updatedPassword = document.getElementById("updated-password").value;
 
-         // Send the update request to the server using Axios
-         axios.post('PHP/update.php', {
-               operation: 'update',
-               json: JSON.stringify(jsonData)
+            // Create a FormData object and append the updated details
+            var formData = new FormData();
+            formData.append("operation", "updateDetails"); // Specify the operation
+            formData.append("json", JSON.stringify({
+                "updated-firstname": updatedFirstname,
+                "updated-middlename": updatedMiddlename,
+                "updated-lastname": updatedLastname,
+                "updated-email": updatedEmail,
+                "updated-cpnumber": updatedCpnumber,
+                "updated-username": updatedUsername,
+                "updated-password": updatedPassword,
+                "userId": sessionStorage.getItem("userId")
+            }));
+
+            // Send the update request to the server using Axios
+            axios.post('http://localhost/sync/PHP/login.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
             })
-            .then(function(response) {
-               // Handle the response from the server
-               console.log(response.data);
-               // You can perform additional actions here if needed
-            })
-            .catch(function(error) {
-               // Handle errors
-               console.error('Error updating details:', error);
-            });
-      }
+                .then(function (response) {
+                    console.log(response.data);
+                })
+                .catch(function (error) {
+                    // Handle errors
+                    console.error('Error updating details:', error);
+                });
+        }
    </script>
 </body>
 

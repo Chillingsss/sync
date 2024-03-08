@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 class Update
@@ -20,44 +21,40 @@ class Update
         }
     }
 
-    public function update($json)
+    public function update($formData)
     {
-        $json = json_decode($json, true);
+        // Extract data from the FormData object
+        $updatedFirstname = $formData["updated-firstname"];
+        $updatedMiddlename = $formData["updated-middlename"];
+        $updatedLastname = $formData["updated-lastname"];
+        $updatedEmail = $formData["updated-email"];
+        $updatedCpnumber = $formData["updated-cpnumber"];
+        $updatedUsername = $formData["updated-username"];
+        $updatedPassword = $formData["updated-password"];
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Check if the user is logged in
-            if (isset($_SESSION["userDetails"]["id"])) {
-                $userId = $_SESSION["userDetails"]["id"];
+        // Check if the user is logged in
+        if (isset($_SESSION["userDetails"]["id"])) {
+            $userId = $_SESSION["userDetails"]["id"];
 
-                // Get updated details from the POST data
-                $updatedFirstname = $json["updated-firstname"];
-                $updatedMiddlename = $json["updated-middlename"];
-                $updatedLastname = $json["updated-lastname"];
-                $updatedEmail = $json["updated-email"];
-                $updatedCpnumber = $json["updated-cpnumber"];
-                $updatedUsername = $json["updated-username"];
-                $updatedPassword = $json["updated-password"];
+            // Use prepared statement to update user details
+            $stmt = $this->conn->prepare("UPDATE tbl_users SET firstname=?, middlename=?, lastname=?, email=?, cpnumber=?, username=?, password=? WHERE id=?");
+            $stmt->bind_param("ssssisss", $updatedFirstname, $updatedMiddlename, $updatedLastname, $updatedEmail, $updatedCpnumber, $updatedUsername, $updatedPassword, $userId);
 
-                // Use prepared statement to update user details
-                $stmt = $this->conn->prepare("UPDATE tbl_users SET firstname=?, middlename=?, lastname=?, email=?, cpnumber=?, username=?, password=? WHERE id=?");
-                $stmt->bind_param("ssssisss", $updatedFirstname, $updatedMiddlename, $updatedLastname, $updatedEmail, $updatedCpnumber, $updatedUsername, $updatedPassword, $userId);
-
-                // Check for errors in binding parameters
-                if ($stmt->error) {
-                    return json_encode(array("status" => -1, "message" => "Error binding parameters: " . $stmt->error));
-                }
-
-                // Execute the statement
-                if ($stmt->execute()) {
-                    return json_encode(array("status" => 1, "message" => "Details updated successfully"));
-                } else {
-                    return json_encode(array("status" => -1, "message" => "Error updating details: " . $stmt->error));
-                }
-
-                $stmt->close();
-            } else {
-                return json_encode(array("status" => -1, "message" => "User not logged in"));
+            // Check for errors in binding parameters
+            if ($stmt->error) {
+                return json_encode(array("status" => -1, "message" => "Error binding parameters: " . $stmt->error));
             }
+
+            // Execute the statement
+            if ($stmt->execute()) {
+                return json_encode(array("status" => 1, "message" => "Details updated successfully"));
+            } else {
+                return json_encode(array("status" => -1, "message" => "Error updating details: " . $stmt->error));
+            }
+
+            $stmt->close();
+        } else {
+            return json_encode(array("status" => -1, "message" => "User not logged in"));
         }
     }
 
@@ -68,14 +65,19 @@ class Update
     }
 }
 
+// Check the operation parameter
 $operation = isset($_POST["operation"]) ? $_POST["operation"] : "Invalid";
-$json = isset($_POST["json"]) ? $_POST["json"] : "";
 
+// Get the form data
+$formData = $_POST;
+
+// Create an instance of the Update class
 $data = new Update();
 
+// Call the update method with form data
 switch ($operation) {
     case "update":
-        echo $data->update($json);
+        echo $data->update($formData);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));
