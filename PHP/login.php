@@ -159,21 +159,17 @@ class Data
 
     function deletePost($json)
     {
-        try {
-            include "connection.php";
-            $json = json_decode($json, true);
+        include "connection.php";
+        $json = json_decode($json, true);
 
-            $postId = $json['postId'];
+        $postId = $json['postId'];
 
-            $sql = "DELETE FROM uploads WHERE id = :postId";
-            $stmt = $pdo->prepare($sql);
-            $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+        $sql = "DELETE FROM uploads WHERE id = :postId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
 
-            $stmt->execute();
-            return $stmt->rowCount() > 0 ? 1 : 0;
-        } catch (Exception $e) {
-            return $e;
-        }
+        $stmt->execute();
+        return $stmt->rowCount() > 0 ? 1 : 0;
     }
 }
 
