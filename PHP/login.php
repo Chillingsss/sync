@@ -73,13 +73,42 @@ class Data
     {
         include "connection.php";
         $json = json_decode($json, true);
-        $sql = "INSERT INTO tbl_points(point_postId, point_userId) VALUE(:postId, :userId)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":postId", $json["postId"]);
-        $stmt->bindParam(":userId", $json["userId"]);
-        $stmt->execute();
-        return $stmt->rowCount() > 0 ? 1 : 0;
+
+        // Retrieve post and user IDs from the request
+        $postId = $json['postId'];
+        $userId = $json['userId'];
+
+        try {
+            $sqlCheckLiked = "SELECT * FROM tbl_points WHERE point_postId = :postId AND point_userId = :userId";
+            $stmtCheckLiked = $conn->prepare($sqlCheckLiked);
+            $stmtCheckLiked->bindParam(":postId", $postId);
+            $stmtCheckLiked->bindParam(":userId", $userId);
+            $stmtCheckLiked->execute();
+
+            if ($stmtCheckLiked->rowCount() > 0) {
+                $sqlUnlike = "DELETE FROM tbl_points WHERE point_postId = :postId AND point_userId = :userId";
+                $stmtUnlike = $conn->prepare($sqlUnlike);
+                $stmtUnlike->bindParam(":postId", $postId);
+                $stmtUnlike->bindParam(":userId", $userId);
+                $stmtUnlike->execute();
+            } else {
+                $sqlLike = "INSERT INTO tbl_points (point_postId, point_userId) VALUES (:postId, :userId)";
+                $stmtLike = $conn->prepare($sqlLike);
+                $stmtLike->bindParam(":postId", $postId);
+                $stmtLike->bindParam(":userId", $userId);
+                $stmtLike->execute();
+            }
+
+            return $stmtLike->rowCount() > 0 || $stmtUnlike->rowCount() > 0 ? 1 : 0;
+        } catch (PDOException $e) {
+            error_log("Error in heartpost function: " . $e->getMessage(), 0);
+            return 0;
+        }
     }
+
+
+
+
 
     function getLikes($json)
     {
@@ -145,17 +174,21 @@ class Data
     {
         include "connection.php";
         $json = json_decode($json, true);
-        $sql = "SELECT a.firstname, b.*
-        FROM tbl_users as a
-        INNER JOIN uploads as b ON a.id = b.userID
-        WHERE a.id = :profID 
-        ORDER BY upload_date DESC";
+        $sql = "SELECT a.firstname, b.*, COUNT(c.point_Id) AS likes
+            FROM tbl_users as a
+            INNER JOIN uploads as b ON a.id = b.userID
+            LEFT JOIN tbl_points as c ON c.point_postId = b.id
+            WHERE a.id = :profID
+            GROUP BY b.id
+            ORDER BY b.upload_date DESC";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam("profID", $json["profID"]);
+        $stmt->bindParam(":profID", $json["profID"]);
         $stmt->execute();
+
         return $stmt->rowCount() > 0 ? json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)) : 0;
     }
+
 
     function deletePost($json)
     {
@@ -169,6 +202,28 @@ class Data
         $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
 
         $stmt->execute();
+        return $stmt->rowCount() > 0 ? 1 : 0;
+    }
+
+    function commentPost($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+
+        $uploadId = $json["uploadId"];
+        $userId = $json["userId"];
+        $commentMessage = $json["commentMessage"];
+
+
+        $sql = "INSERT INTO tbl_comment (comment_userID, comment_message, comment_uploadId, comment_date_created)
+            VALUES (:userId, :commentMessage, :uploadId, NOW())";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":commentMessage", $commentMessage);
+        $stmt->bindParam(":uploadId", $uploadId);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->execute();
+
         return $stmt->rowCount() > 0 ? 1 : 0;
     }
 }
@@ -195,6 +250,9 @@ switch ($operation) {
         break;
     case "deletePost":
         echo $data->deletePost($json); // Call the deletePost function
+        break;
+    case "commentPost":
+        echo $data->commentPost($json);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));

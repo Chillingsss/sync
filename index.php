@@ -81,44 +81,52 @@
 
    <div class="modal fade" id="updateDetailsModal" tabindex="-1" role="dialog" aria-labelledby="updateDetailsModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
-         <div class="modal-content" style="background-color: #242526; border-radius:20px;">
+         <div class="modal-content" style="background-color: #FFF; border-radius:20px;">
             <div class="modal-header">
-               <h5 class="modal-title text-white" id="updateDetailsModalLabel">Update User Details</h5>
+               <h5 class="modal-title bg-white" id="updateDetailsModalLabel">Update User Details</h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                </button>
             </div>
             <div class="modal-body">
                <form id="updateDetailsForm" onclick="updateDetails()">
-                  <div class="form-group">
-                     <label for="updated-firstname">First Name:</label>
-                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated first name">
+                  <div class="form-group" style="margin-bottom: 20px">
+                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated Firstname" required>
+                     <small id="firstnameErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <div class="form-group">
-                     <label for="updated-middlename">Middle Name:</label>
+                  <div class="form-group" style="margin-bottom: 20px">
+
                      <input type="text" class="form-control" id="updated-middlename" placeholder="Enter updated middle name">
+                     <small id="middlenameErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <div class="form-group">
-                     <label for="updated-lastname">Last Name:</label>
+                  <div class="form-group" style="margin-bottom: 20px">
                      <input type="text" class="form-control" id="updated-lastname" placeholder="Enter updated last name">
+                     <small id="lastnameErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <div class="form-group">
-                     <label for="updated-email">Email:</label>
+                  <div class="form-group" style="margin-bottom: 20px">
+
                      <input type="email" class="form-control" id="updated-email" placeholder="Enter updated email">
+                     <small id="emailErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <div class="form-group">
-                     <label for="updated-cpnumber">Contact Number:</label>
+                  <div class="form-group" style="margin-bottom: 20px">
+
                      <input type="tel" class="form-control" id="updated-cpnumber" placeholder="Enter updated contact number">
+                     <small id="contactErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <div class="form-group">
-                     <label for="updated-username">Username:</label>
+                  <div class="form-group" style="margin-bottom: 20px">
+
                      <input type="text" class="form-control" id="updated-username" placeholder="Enter updated username">
+                     <small id="userErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <div class="form-group">
-                     <label for="updated-password">Password:</label>
+                  <div class="form-group" style="margin-bottom: 20px">
+
                      <input type="password" class="form-control" id="updated-password" placeholder="Enter updated password">
+                     <small id="passErrorMsg" class="form-text text-danger"></small>
                   </div>
-                  <button type="button" class="btn btn-primary">Save Changes</button>
+
+                  <div class="d-flex justify-content-end align-items-end">
+                     <button type="button" class="btn btn-primary d-flex justify-content-right">Save Changes</button>
+                  </div>
                </form>
             </div>
          </div>
@@ -139,6 +147,7 @@
             <div class="modal-dialog" role="document">
                <div class="modal-content" style="background-color: #242526; border-radius:20px;">
                   <div class="modal-header">
+
 
                      <h5 class="modal-title" id="postModalLabel" style="color: #E4E6EB;">Create a Post</h5>
                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">

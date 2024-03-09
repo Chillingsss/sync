@@ -66,30 +66,34 @@ function fetchImages() {
                     .then(user => {
                         const cardHtml = `
                         <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
-                        <a href="#" onclick="openUserPostsModal(${post.userID})" style="text-decoration: none; color: #E4E6EB;">
-                        <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem;">${post.firstname}</div>
-                    </a>
+                            <a href="#" onclick="openUserPostsModal(${post.userID})" style="text-decoration: none; color: #E4E6EB;">
+                                <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem;">${post.firstname}</div>
+                            </a>
                             
                                 ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
                           
                             <div style="text-align: right;" class="small text-muted">${formatTimestamp(post.upload_date)}</div>
 
                             <div class="text-center mb-4">
-                                <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">"${post.caption}"</div>
+                                <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">${post.caption}</div>
                             </div>
 
-                            <!-- Comment Section -->
-                            <div>
-                                <ul id="comments-${post.postId}"></ul>
-                                <form onsubmit="addComment(event, ${post.postId})">
-                                    <div class="d-flex ml-4 mr-3">
-                                        <input type="text" class="form-control mr-3" style="flex-grow: 1; background-color: #242526;  border-radius: 50px;" id="comment-${post.postId}" placeholder="Add a comment" required>
-                                        <button type="submit" class="btn mr-2">
+                            <div class="d-flex align-items-center">
+                                <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px;">
+                                    <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
+                                </button>
+                                <ul id="comments-${post.postId}" class="list-unstyled mr-3"></ul>
+                                    <form onsubmit="addComment(event, ${post.postId})" class="d-flex">
+                                        <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="commentInput-${post.postId}" placeholder="Add a comment" required>
+                                        <button type="submit" class="btn">
                                             <img src="img/comment.png" alt="Sync Comment">
                                         </button>
-                                    </div>
-                                </form>
+                                    </form>
+
+                            </form>
+
                             </div>
+
                         </div>
                     `;
 
@@ -105,6 +109,49 @@ function fetchImages() {
             });
         });
 }
+
+function heartPost(postId) {
+    const userId = sessionStorage.getItem('userId');
+    const jsonData = {
+        postId: postId,
+        userId: userId
+    };
+    const formData = new FormData();
+    formData.append("operation", "heartpost");
+    formData.append("json", JSON.stringify(jsonData));
+
+    const likeCountElement = document.getElementById(`likeCount-${postId}`);
+    let isLiked = likeCountElement && likeCountElement.dataset.liked === 'true';
+
+    axios.post(`http://localhost/sync/PHP/login.php`, formData)
+        .then(response => {
+            if (response.data === 1) {
+                const currentLikes = parseInt(likeCountElement.textContent);
+
+                if (!isLiked) {
+                    console.log('Post liked successfully:', response);
+                    likeCountElement.textContent = currentLikes + 1;
+                } else {
+                    console.log('Post unliked successfully:', response);
+                    likeCountElement.textContent = Math.max(currentLikes - 1, 0);
+                }
+
+                isLiked = !isLiked;
+                likeCountElement.dataset.liked = isLiked ? 'true' : 'false';
+            } else {
+                console.error('Error interacting with post:', response);
+            }
+        })
+        .catch(error => {
+            console.error('Error interacting with post:', error);
+        });
+}
+
+
+
+
+
+
 
 // function openPostDetails(postId) {
 //     // Fetch the detailed post information
@@ -148,36 +195,16 @@ function formatTimestamp(timestamp) {
 }
 
 function fetchComments(postId) {
-    fetch(`fetch_comments.php?postId=${postId}`)
-        .then(response => response.json())
-        .then(comments => {
-            const commentsList = document.getElementById(`comments-${postId}`);
-            commentsList.innerHTML = '';
+    const jsonData = {
+        postId: postId,
+        comment: document.getElementById(`commentInput-${postId}`).value
+    };
 
-            comments.forEach(comment => {
-                const li = document.createElement('li');
-                li.textContent = comment.comment;
-                commentsList.appendChild(li);
-            });
-        });
-}
+    const formData = new FormData();
+    formData.append("operation", "commentPost");
+    formData.append("json", JSON.stringify(jsonData));
 
-function addComment(event, postId) {
-    event.preventDefault();
-    const commentInput = document.getElementById(`comment-${postId}`);
-    const comment = commentInput.value;
-
-    // Add the comment to the UI
-    const commentsList = document.getElementById(`comments-${postId}`);
-    const li = document.createElement('li');
-    li.textContent = comment;
-    commentsList.appendChild(li);
-
-    // Clear the input field
-    commentInput.value = '';
-
-    // Send the comment to the server (you need to implement this part in your PHP script)
-    axios.post('add_comment.php', { postId, comment })
+    axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
             console.log('Comment added successfully:', response.data);
         })
@@ -185,6 +212,36 @@ function addComment(event, postId) {
             console.error('Error adding comment:', error);
         });
 }
+
+function addComment(event, postId) {
+    event.preventDefault();
+    const commentInput = document.getElementById(`commentInput-${postId}`);
+    const comment = commentInput.value;
+
+    const userId = sessionStorage.getItem('userId');
+    const jsonData = {
+        postId: postId,
+        userId: userId,
+        comment: comment,
+        operation: "commentPost" // Make sure this is correct
+    };
+
+
+    const formData = new FormData();
+    formData.append("json", JSON.stringify(jsonData));
+
+    axios.post(`http://localhost/sync/PHP/login.php`, formData)
+        .then(response => {
+            console.log('Comment added successfully:', response.data);
+        })
+        .catch(error => {
+            console.error('Error adding comment:', error);
+        });
+}
+
+
+
+
 
 document.addEventListener('DOMContentLoaded', fetchImages);
 

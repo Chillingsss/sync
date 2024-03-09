@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 
-<body class="d-flex justify-content-center align-items-center bg-dark" style="height: 100vh;">
+<body class="d-flex justify-content-center align-items-center" style="height: 100vh; background-color: #242526;">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-4">
 
-                <div class="card">
+                <div class="card" style="background-color: #0F0F0F;">
 
-                    <div class="card-header d-flex justify-content-center align-items-center"
+                    <div class="card-header d-flex justify-content-center align-items-center text-white"
                         style="font-size: 30px; font-family:Georgia, 'Times New Roman', Times, serif; height: 50px;">
                         Sync
                     </div>
@@ -26,16 +26,16 @@
                     <div id="login-form" class="card-body form-container">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" id="loginUsername" placeholder="Username"
-                                    required>
+                                <input type="text" class="form-control bg-dark text-white" id="loginUsername"
+                                    placeholder="Username" required>
                                 <small id="usernameErrorMsg" class="form-text text-danger"></small>
-                                <!-- Add error message element -->
+
                             </div>
                             <div class="form-group">
-                                <input type="password" class="form-control" id="loginPassword" placeholder="Password"
-                                    required>
+                                <input type="password" class="form-control bg-dark text-white" id="loginPassword"
+                                    placeholder="Password" required>
                                 <small id="passwordErrorMsg" class="form-text text-danger"></small>
-                                <!-- Add error message element -->
+
                             </div>
                         </form>
                         <div class="text-center">
@@ -46,7 +46,7 @@
 
                 </div>
 
-                <div id="register" class="card mt-2 ">
+                <div id="register" class="card mt-2 text-white" style="background-color: #0F0F0F;">
                     <div class="card-body d-flex justify-content-center align-items-center">
                         <p class="m-0">Don't have an account?
                             <a type="button" class="" data-toggle="modal" data-target="#exampleModal">
@@ -57,7 +57,7 @@
                 </div>
 
                 <!-- Modal -->
-                <div class="modal fade " id="exampleModal" tabindex="-1" role="dialog"
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog col-md-4 mx-auto " role="document">
                         <div class="modal-content">
@@ -71,7 +71,7 @@
                             </div>
                             <div class="modal-body">
                                 <form id="registration-form-inner" method="post" onsubmit="registerUser()">
-                                    <div class="form-group" style="margin-bottom: 20px;">
+                                    <div class="form-group" style="margin-bottom: 10px;">
                                         <input type="text" class="form-control" name="reg-firstname" id="reg-firstname"
                                             placeholder="First Name" required>
                                         <small id="firstnameErrorMsg" class="form-text text-danger"></small>
