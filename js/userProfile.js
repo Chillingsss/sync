@@ -73,11 +73,8 @@ function fetchUserPosts(userId) {
             </div>
         `;
 
-                    // Append the card HTML to the image container
                     prof.innerHTML += cardHtml;
 
-                    // Fetch and display comments for each post
-                    // fetchComments(post.postId);
                 });
             })
             .catch(error => {

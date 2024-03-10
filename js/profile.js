@@ -71,8 +71,6 @@ function fetchUserPosts() {
                             <div class="small text-muted">${formatTimestamp(post.upload_date)}</div>
                         </div>
 
-
-
                         <div class="text-center mb-4">
                         <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">${post.caption}</div>
 

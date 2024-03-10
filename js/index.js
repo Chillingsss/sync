@@ -41,13 +41,11 @@ function submitForm() {
     })
         .then(function (response) {
             console.log('Response Data:', response.data);
-            // Handle success
             alert(response.data.message || response.data.error);
             window.location.href = "index.php";
         })
         .catch(function (error) {
             console.error('Error:', error);
-            // Handle error
             alert('An error occurred. Please try again.');
         });
 }
@@ -78,26 +76,26 @@ function fetchImages() {
                                 <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">${post.caption}</div>
                             </div>
 
+                            <ul id="comments-${post.comment_message}" class="list-unstyled mr-3"></ul>
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px;">
                                     <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
                                 </button>
-                                <ul id="comments-${post.postId}" class="list-unstyled mr-3"></ul>
-                                    <form onsubmit="addComment(${post.postId}); return false;" class="d-flex">
-                                        <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="commentInput-${post.postId}" placeholder="Add a comment" required>
+                                
+                                    <form onsubmit="addComment(${post.uploadId}); return false;" class="d-flex">
+                                        <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="commentInput-${post.uploadId}" placeholder="Add a comment">
                                         <button type="submit" class="btn">
                                             <img src="img/comment.png" alt="Sync Comment">
                                         </button>
                                     </form>
 
-                            </form>
-
+                        
                             </div>
 
                         </div>
                     `;
 
-                        // Append the card HTML to the image container
+
                         imageContainer.innerHTML += cardHtml;
 
                         // Fetch and display comments for each post
@@ -182,8 +180,6 @@ function openUserPostsModal(userID) {
     window.location.href = `userProfile.html?userId=${userID}`;
 }
 
-
-// Function to format timestamp to a readable format (adjust as needed)
 function formatTimestamp(timestamp) {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
     return new Date(timestamp).toLocaleDateString('en-US', options);

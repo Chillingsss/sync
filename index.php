@@ -91,7 +91,7 @@
             <div class="modal-body">
                <form id="updateDetailsForm" onclick="updateDetails()">
                   <div class="form-group" style="margin-bottom: 20px">
-                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated Firstname" required>
+                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated Firstname">
                      <small id="firstnameErrorMsg" class="form-text text-danger"></small>
                   </div>
                   <div class="form-group" style="margin-bottom: 20px">
@@ -201,7 +201,6 @@
                </button>
             </div>
             <div class="modal-body" id="postDetails">
-               <!-- This div will be populated with the post details -->
             </div>
          </div>
       </div>
@@ -218,7 +217,6 @@
                </button>
             </div>
             <div class="modal-body" id="userPostsModalBody">
-               <!-- This div will be populated with the posts of the clicked user -->
             </div>
          </div>
       </div>
@@ -241,18 +239,14 @@
          console.log("damn");
          const userId = sessionStorage.getItem('userId');
 
-         // Check if userId is available before making the request
          if (userId) {
             axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
                .then(response => {
                   console.log('User details response:', response.data);
                   const userData = response.data;
 
-                  // Update the modal content with user details
                   document.getElementById("userFirstname").textContent = userData.firstname;
-                  // Add more lines to update other elements as needed
 
-                  // Optional: You can also update the content inside the modal
                   document.getElementById("userDetailsContent").innerHTML = `
                <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
                <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
@@ -272,14 +266,12 @@
       });
 
       function openUpdateDetailsForm() {
-         // Display the update details form
          document.getElementById('update-details-form-container').style.display = 'block';
       }
 
       function updateDetails() {
          console.log("update");
 
-         // Get updated details from the form
          var updatedFirstname = document.getElementById("updated-firstname").value;
          var updatedMiddlename = document.getElementById("updated-middlename").value;
          var updatedLastname = document.getElementById("updated-lastname").value;
@@ -288,9 +280,9 @@
          var updatedUsername = document.getElementById("updated-username").value;
          var updatedPassword = document.getElementById("updated-password").value;
 
-         // Create a FormData object and append the updated details
+
          var formData = new FormData();
-         formData.append("operation", "updateDetails"); // Specify the operation
+         formData.append("operation", "updateDetails");
          formData.append("json", JSON.stringify({
             "updated-firstname": updatedFirstname,
             "updated-middlename": updatedMiddlename,
@@ -302,7 +294,6 @@
             "userId": sessionStorage.getItem("userId")
          }));
 
-         // Send the update request to the server using Axios
          axios.post('http://localhost/sync/PHP/login.php', formData, {
                headers: {
                   'Content-Type': 'multipart/form-data'
@@ -312,7 +303,6 @@
                console.log(response.data);
             })
             .catch(function(error) {
-               // Handle errors
                console.error('Error updating details:', error);
             });
       }
