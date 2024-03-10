@@ -83,7 +83,7 @@ function fetchImages() {
                                     <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
                                 </button>
                                 <ul id="comments-${post.postId}" class="list-unstyled mr-3"></ul>
-                                    <form onsubmit="addComment(event, ${post.postId})" class="d-flex">
+                                    <form onsubmit="addComment(${post.postId}); return false;" class="d-flex">
                                         <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="commentInput-${post.postId}" placeholder="Add a comment" required>
                                         <button type="submit" class="btn">
                                             <img src="img/comment.png" alt="Sync Comment">
@@ -148,11 +148,6 @@ function heartPost(postId) {
 }
 
 
-
-
-
-
-
 // function openPostDetails(postId) {
 //     // Fetch the detailed post information
 //     fetch(`fetch_post_details.php?postId=${postId}`)
@@ -196,12 +191,12 @@ function formatTimestamp(timestamp) {
 
 function fetchComments(postId) {
     const jsonData = {
-        postId: postId,
-        comment: document.getElementById(`commentInput-${postId}`).value
+        uploadId: postId,
+        comment_message: document.getElementById(`commentInput-${postId}`).value,
+        operation: "commentPost"
     };
 
     const formData = new FormData();
-    formData.append("operation", "commentPost");
     formData.append("json", JSON.stringify(jsonData));
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
@@ -213,19 +208,17 @@ function fetchComments(postId) {
         });
 }
 
-function addComment(event, postId) {
-    event.preventDefault();
+function addComment(postId) {
     const commentInput = document.getElementById(`commentInput-${postId}`);
     const comment = commentInput.value;
 
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
-        postId: postId,
+        uploadId: postId,
         userId: userId,
-        comment: comment,
-        operation: "commentPost" // Make sure this is correct
+        comment_message: comment,
+        operation: "commentPost"
     };
-
 
     const formData = new FormData();
     formData.append("json", JSON.stringify(jsonData));
@@ -238,6 +231,7 @@ function addComment(event, postId) {
             console.error('Error adding comment:', error);
         });
 }
+
 
 
 

@@ -212,14 +212,14 @@ class Data
 
         $uploadId = $json["uploadId"];
         $userId = $json["userId"];
-        $commentMessage = $json["commentMessage"];
+        $comment_message = $json["comment_message"];
 
 
         $sql = "INSERT INTO tbl_comment (comment_userID, comment_message, comment_uploadId, comment_date_created)
-            VALUES (:userId, :commentMessage, :uploadId, NOW())";
+            VALUES (:userId, :comment_message, :uploadId, NOW())";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bindParam(":commentMessage", $commentMessage);
+        $stmt->bindParam(":comment_message", $comment_message);
         $stmt->bindParam(":uploadId", $uploadId);
         $stmt->bindParam(":userId", $userId);
         $stmt->execute();
