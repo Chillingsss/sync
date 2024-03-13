@@ -4,7 +4,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Image Uploads</title>
+   <title>News Feed</title>
    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -89,7 +89,7 @@
                </button>
             </div>
             <div class="modal-body">
-               <form id="updateDetailsForm" onclick="updateDetails()">
+               <form id="updateDetailsForm" onsubmit="updateDetails()">
                   <div class="form-group" style="margin-bottom: 20px">
                      <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated Firstname">
                      <small id="firstnameErrorMsg" class="form-text text-danger"></small>
@@ -125,7 +125,7 @@
                   </div>
 
                   <div class="d-flex justify-content-end align-items-end">
-                     <button type="button" class="btn btn-primary d-flex justify-content-right">Save Changes</button>
+                     <button type="submit" class="btn btn-primary">Save Changes</button>
                   </div>
                </form>
             </div>
@@ -142,20 +142,18 @@
             What's on your mind?
          </button>
 
-         <!-- Modal -->
+         <!-- modal para sa mag create ug post -->
          <div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                <div class="modal-content" style="background-color: #242526; border-radius:20px;">
                   <div class="modal-header">
-
-
                      <h5 class="modal-title" id="postModalLabel" style="color: #E4E6EB;">Create a Post</h5>
                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                      </button>
                   </div>
-                  <div class="modal-body">
-                     <!-- Form inside the modal -->
+
+                  <div class="modal-body" id="modal-body">
                      <form id="uploadForm" enctype="multipart/form-data">
                         <div class="form-group">
                            <!-- Input for file selection -->
@@ -165,9 +163,17 @@
                            <label for="file" style="cursor: pointer;">
                               <span style="color: #E4E6EB;">Choose File </span>
                               <img id="previewImage" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; border-radius:30px" />
-
                            </label>
                         </div>
+
+                        <!-- Add camera option -->
+                        <div class="form-group">
+                           <button id="on-button" onclick="openCamera(event)">Turn it ON</button>
+                           <video id="webcam" width="640" height="480" hidden></video>
+                           <button id="capture-button" onclick="captureFrame()">Capture</button>
+                           <button id="off-button" onclick="turnOff()" hidden>Turn it OFF</button>
+                        </div>
+
 
                         <div class="form-group">
                            <label for="caption">Caption:</label>
@@ -175,17 +181,20 @@
                         </div>
                      </form>
                   </div>
-                  <div class=" modal-footer">
+
+                  <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                      <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
                   </div>
                </div>
             </div>
          </div>
+
+
+
       </div>
 
-      <div class="col-md-13 " id="imageContainer">
-      </div>
+      <div class="col-md-13 " id="imageContainer"></div>
 
    </div>
 
@@ -301,10 +310,58 @@
             })
             .then(function(response) {
                console.log(response.data);
+
+               window.location.reload();
+
+
             })
             .catch(function(error) {
                console.error('Error updating details:', error);
             });
+      }
+
+
+
+      var webcamOn = false;
+
+      function openCamera(event) {
+         event.preventDefault();
+
+         if (!webcamOn) {
+            const constraints = {
+               video: true
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+               .then(function(stream) {
+                  var video = document.getElementById('webcam');
+                  video.srcObject = stream;
+                  video.play();
+                  webcamOn = true;
+                  document.getElementById('on-button').hidden = true;
+                  video.hidden = false;
+                  document.getElementById('off-button').hidden = false;
+               })
+               .catch(function(err) {
+                  console.error('Error accessing camera:', err);
+               });
+         }
+      }
+
+      function captureFrame() {
+         var video = document.getElementById('webcam');
+         var canvas = document.createElement('canvas');
+         var context = canvas.getContext('2d');
+
+         canvas.width = video.videoWidth;
+         canvas.height = video.videoHeight;
+
+         context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+         var imageDataURL = canvas.toDataURL('image/png');
+
+         var previewImage = document.getElementById('previewImage');
+         previewImage.src = imageDataURL;
       }
    </script>
 </body>

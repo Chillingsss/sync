@@ -351,6 +351,9 @@ function fetchUserDetails() {
         });
 }
 
+
+
+
 // Assume this code is in your main JavaScript file (e.g., js/index.js)
 // document.addEventListener("DOMContentLoaded", function () {
 //     // Fetch user details and update the modal content

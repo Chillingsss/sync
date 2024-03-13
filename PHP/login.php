@@ -205,6 +205,29 @@ class Data
         return $stmt->rowCount() > 0 ? 1 : 0;
     }
 
+    function editPost($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+
+        $sql = "UPDATE uploads SET caption=:updatedCaption WHERE id=:postId";
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(":updatedCaption", $json["updatedCaption"]);
+
+        $stmt->bindParam(":postId", $json["postId"]);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return json_encode(array("status" => 1, "message" => "Details updated successfully"));
+        } else {
+            throw new Exception("Error executing SQL statement.");
+        }
+
+        $stmt = null;
+        $conn = null;
+    }
+
     function commentPost($json)
     {
         include "connection.php";
@@ -253,6 +276,9 @@ switch ($operation) {
         break;
     case "commentPost":
         echo $data->commentPost($json);
+        break;
+    case "editPost":
+        echo $data->editPost($json);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));

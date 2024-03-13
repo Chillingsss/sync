@@ -66,10 +66,14 @@ function fetchUserPosts() {
             
                         ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
                         
-                        <div class="d-flex justify-content-between">
-                            <a href="#" onclick="deletePost(${post.id})" class="text-muted">Delete</a>
-                            <div class="small text-muted">${formatTimestamp(post.upload_date)}</div>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <a href="#" onclick="deletePost(${post.id})" class="text-muted mr-3">Delete</a>
+                            <a href="#" onclick="editPost(${post.id})" class="text-muted">Edit</a>
                         </div>
+                        <div class="small text-muted">${formatTimestamp(post.upload_date)}</div>
+                    </div>
+                    
 
                         <div class="text-center mb-4">
                         <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">${post.caption}</div>
@@ -105,6 +109,47 @@ function fetchUserPosts() {
         console.error('userId not available');
     }
 }
+
+function editPost(postId) {
+    $('#editModal').modal('show');
+    sessionStorage.setItem("selectedPostId", postId);
+
+}
+
+
+function submitEdit(postId) {
+
+    var updatedCaption = document.getElementById("updated-caption").value;
+
+    const jsonData = {
+        postId: postId,
+        updatedCaption: updatedCaption
+    };
+
+    console.log("jsonData", jsonData);
+    const formData = new FormData();
+    formData.append("operation", "editPost");
+    formData.append("json", JSON.stringify(jsonData));
+
+    axios.post('http://localhost/sync/PHP/login.php', formData)
+        .then(response => {
+            if (response.data.status === 1) {
+
+                console.log('Caption updated successfully:', response.data);
+                $('#editModal').modal('hide');
+                alert("Caption updated successfully!");
+
+            } else {
+                console.error('Error updating caption:', response.data);
+                alert("Error updating caption. Please try again later.");
+            }
+        })
+        .catch(error => {
+            console.error('Error updating caption:', error);
+            alert("Error updating caption. Please try again later.");
+        });
+}
+
 
 function heartPost(postId) {
     const userId = sessionStorage.getItem('userId');
@@ -143,6 +188,75 @@ function heartPost(postId) {
         })
         .catch(error => {
             console.error('Error interacting with post:', error);
+        });
+}
+
+// function submitEdit(postId) {
+//     var updatedCaption = document.getElementById("updated-caption").value;
+
+
+//     const jsonData = {
+//         postId: postId,
+//         "updated-caption": updatedCaption
+//     };
+//     const formData = new FormData();
+//     formData.append("operation", "editPost");
+//     formData.append("json", JSON.stringify(jsonData));
+
+//     axios.post('http://localhost/sync/PHP/login.php', formData)
+//         .then(response => {
+//             console.log("resoponse ni submitEdit", response.data);
+//             if (response.data.status === 1) {
+//                 console.log('Caption updated successfully:', response.data);
+//                 $('#editModal').modal('hide');
+//                 alert("Caption updated successfully!");
+//             } else {
+//                 console.error('Error updating caption:', response.data);
+//                 alert("Error updating caption. Please try again later.");
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Error updating caption:', error);
+//             alert("Error updating caption. Please try again later.");
+//         });
+// }
+
+
+function fetchImages() {
+    fetch('fetch_images.php')
+        .then(response => response.json())
+        .then(data => {
+            const profileContainer = document.getElementById('profileContainer');
+            profileContainer.innerHTML = '';
+
+            data.forEach(post => {
+                const userId = post.userId;
+                fetch(`fetch_user.php?userId=${post.userId}`)
+                    .then(response => response.json())
+                    .then(user => {
+                        const cardHtml = `
+                        <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
+                            <a href="#" onclick="openUserPostsModal(${post.userID})" style="text-decoration: none; color: #E4E6EB;">
+                                <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem;">${post.firstname}</div>
+                            </a>
+                            
+                                ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
+                          
+                            
+
+                        </div>
+                    `;
+
+
+                        profileContainer.innerHTML += cardHtml;
+
+                        // Fetch and display comments for each post
+                        fetchComments(post.postId);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user details:', error);
+                    });
+            });
         });
 }
 
