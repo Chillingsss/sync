@@ -354,8 +354,11 @@ function logout() {
     console.log("Logout na siya");
     axios.post('PHP/logout.php')
         .then(() => {
+            sessionStorage.removeItem("selectedPostId");
+            sessionStorage.removeItem("userId");
             // Clear local storage
             localStorage.clear();
+
             // Redirect to login page
             window.location.href = "login.html";
         })
