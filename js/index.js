@@ -76,18 +76,14 @@ function fetchImages() {
                                 <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">${post.caption}</div>
                             </div>
 
-                            <ul id="comments-${post.comment_message}" class="list-unstyled mr-3"></ul>
+                            
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px;">
                                     <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
                                 </button>
                                 
-                                    <form onsubmit="addComment(${post.uploadId}); return false;" class="d-flex">
-                                        <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="commentInput-${post.uploadId}" placeholder="Add a comment">
-                                        <button type="submit" class="btn">
-                                            <img src="img/comment.png" alt="Sync Comment">
-                                        </button>
-                                    </form>
+                                <a href="#" onclick="commentPost(${post.id})" class="text-muted">Comment</a>
+                            
 
                         
                             </div>
@@ -185,43 +181,76 @@ function formatTimestamp(timestamp) {
     return new Date(timestamp).toLocaleDateString('en-US', options);
 }
 
-function fetchComments(postId) {
+function fetchComments() {
     const jsonData = {
-        uploadId: postId,
-        comment_message: document.getElementById(`commentInput-${postId}`).value,
-        operation: "commentPost"
+        uploadId: sessionStorage.getItem("selectedPostId"),
     };
 
     const formData = new FormData();
     formData.append("json", JSON.stringify(jsonData));
+    formData.append("operation", "fetchComment")
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
-            console.log('Comment added successfully:', response.data);
+            // Clear previous comments
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '';
+
+            // Populate comments in the modal
+            response.data.forEach(comment => {
+                const commentContainer = document.createElement('div');
+                const commentFirstName = document.createElement('div');
+                const commentItem = document.createElement('div');
+
+                // Set inline styles for side-by-side display
+                commentContainer.style.display = 'flex';
+                commentFirstName.style.flexBasis = '30%'; // Adjust as needed
+                commentFirstName.style.marginRight = '10px'; // Adjust as needed
+
+                commentFirstName.textContent = comment.firstname + ": ";
+                commentItem.textContent = comment.comment_message;
+
+                // Append first name and comment to the comment container
+                commentContainer.appendChild(commentFirstName);
+                commentContainer.appendChild(commentItem);
+
+                // Append the comment container to the comment list
+                commentList.appendChild(commentContainer);
+            });
+
+            // Show the comment modal
+            $('#commentModal').modal('show');
         })
         .catch(error => {
-            console.error('Error adding comment:', error);
+            console.error('Error fetching comments:', error);
         });
 }
 
-function addComment(postId) {
-    const commentInput = document.getElementById(`commentInput-${postId}`);
-    const comment = commentInput.value;
 
+
+
+function addComment() {
+    const commentInput = document.getElementById(`commentInput`).value;
+    // const comment = commentInput.value;
+    // console.log("postIDDDD", postId);
+    const postId = sessionStorage.getItem("selectedPostId");
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
         uploadId: postId,
         userId: userId,
-        comment_message: comment,
-        operation: "commentPost"
+        comment_message: commentInput,
     };
+
+    console.log("JsonData", JSON.stringify(jsonData));
 
     const formData = new FormData();
     formData.append("json", JSON.stringify(jsonData));
+    formData.append("operation", "commentPost")
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
             console.log('Comment added successfully:', response.data);
+            fetchComments();
         })
         .catch(error => {
             console.error('Error adding comment:', error);
@@ -229,7 +258,11 @@ function addComment(postId) {
 }
 
 
-
+function commentPost(postId) {
+    $('#commentModal').modal('show');
+    sessionStorage.setItem("selectedPostId", postId);
+    fetchComments();
+}
 
 
 

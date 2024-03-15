@@ -249,6 +249,31 @@ class Data
 
         return $stmt->rowCount() > 0 ? 1 : 0;
     }
+
+    function fetchComment($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+
+        $sql = "SELECT a.firstname, b.comment_message 
+        FROM tbl_users as a 
+        INNER JOIN tbl_comment as b ON b.comment_userID = a.id 
+        WHERE b.comment_uploadId = :postId";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":postId", $json["uploadId"]);
+
+        $stmt->execute();
+
+        $returnValue = 0;
+
+        if ($stmt->rowCount() > 1) {
+            $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $returnValue = json_encode($rs);
+        }
+
+        return $returnValue;
+    }
 }
 
 $operation = isset($_POST["operation"]) ? $_POST["operation"] : "Invalid";
@@ -279,6 +304,9 @@ switch ($operation) {
         break;
     case "editPost":
         echo $data->editPost($json);
+        break;
+    case "fetchComment":
+        echo $data->fetchComment($json);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));

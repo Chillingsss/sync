@@ -166,7 +166,7 @@
                            </label>
                         </div>
 
-                        <!-- Add camera option -->
+                        <!-- camera option -->
                         <div class="form-group">
                            <button id="on-button" onclick="openCamera(event)">Turn it ON</button>
                            <video id="webcam" width="640" height="480" hidden></video>
@@ -230,6 +230,41 @@
          </div>
       </div>
    </div>
+
+
+   <!-- Comment Modal -->
+   <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+               <form id="commentForm">
+                  <div class="form-group">
+                     <label for="commentInput">Comment:</label>
+                     <textarea class="form-control" id="commentInput" rows="3" placeholder="Enter your comment"></textarea>
+                  </div>
+               </form>
+            </div>
+            <div class="modal-footer">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+               <button type="button" class="btn btn-primary" onclick="addComment()">Add Comment</button>
+
+            </div>
+            <!-- Display area for fetched comments -->
+            <div class="modal-body">
+               <h5>Comments:</h5>
+               <div id="firstname"></div>
+               <div id="commentList"></div>
+            </div>
+         </div>
+      </div>
+   </div>
+
 
 
 
@@ -347,6 +382,7 @@
                });
          }
       }
+
 
       function captureFrame() {
          var video = document.getElementById('webcam');
