@@ -51,6 +51,7 @@ function submitForm() {
 }
 
 function fetchImages() {
+    sessionStorage.removeItem("selectedPostId");
     fetch('fetch_images.php')
         .then(response => response.json())
         .then(data => {
@@ -96,6 +97,7 @@ function fetchImages() {
 
                         // Fetch and display comments for each post
                         fetchComments(post.postId);
+
                     })
                     .catch(error => {
                         console.error('Error fetching user details:', error);
