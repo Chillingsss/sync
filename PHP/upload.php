@@ -32,7 +32,7 @@ if (!empty($_FILES['file']['name'])) {
 
     if (in_array($fileActualExt, $allowed)) {
         if ($fileError === 0) {
-            if ($fileSize < 1000000) { // Adjust the file size limit as needed
+            if ($fileSize < 25000000) {
                 $fileNameNew = uniqid('', true) . "." . $fileActualExt;
                 // $fileDestination = 'uploads/' . $fileNameNew;
                 $fileDestination = '/var/www/html/sync/uploads/' . $fileNameNew;

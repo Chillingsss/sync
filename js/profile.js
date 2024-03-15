@@ -133,11 +133,16 @@ function submitEdit(postId) {
 
     axios.post('http://localhost/sync/PHP/login.php', formData)
         .then(response => {
+
+
             if (response.data.status === 1) {
 
                 console.log('Caption updated successfully:', response.data);
+
                 $('#editModal').modal('hide');
                 alert("Caption updated successfully!");
+                window.location.href = "profile.html";
+
 
             } else {
                 console.error('Error updating caption:', response.data);

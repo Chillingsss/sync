@@ -167,13 +167,19 @@
                         </div>
 
                         <!-- camera option -->
-                        <div class="form-group">
-                           <button id="on-button" onclick="openCamera(event)">Turn it ON</button>
-                           <video id="webcam" width="640" height="480" hidden></video>
-                           <button id="capture-button" onclick="captureFrame()">Capture</button>
-                           <button id="off-button" onclick="turnOff()" hidden>Turn it OFF</button>
-                        </div>
 
+                        <div id="webcamDiv" class="camView">
+                           <video id="webcam" width="600" height="440" autoplay></video>
+                        </div>
+                        <div>
+                           <button id="webcamButton">Open Webcam</button>
+                           <button id="stopButton">Stop Webcam</button>
+                           <button id="capture">Capture Image</button>
+                        </div>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <div class="output">
+                           <img id="photo" alt="Captured Image">
+                        </div>
 
                         <div class="form-group">
                            <label for="caption">Caption:</label>
@@ -271,12 +277,56 @@
    <script src="js/index.js"></script>
 
    <script>
+      var webcamDiv;
+      var video;
+      var canvas = document.getElementById("canvas");
+      var photo = document.getElementById("photo");
+
+      document.addEventListener("DOMContentLoaded", () => {
+         const btnWebcam = document.getElementById("webcamButton");
+         const btnStop = document.getElementById("stopButton");
+         webcamDiv = document.getElementById("webcamDiv");
+
+         btnWebcam.addEventListener("click", () => {
+            navigator.mediaDevices.getUserMedia({
+               video: true,
+               audio: false
+            }).then(stream => {
+               video = document.getElementById("webcam");
+               video.srcObject = stream;
+               video.addEventListener("loadedmetadata", () => {
+                  video.play();
+               });
+            }).catch(error => {
+               alert(error);
+            });
+         });
+
+         btnStop.addEventListener("click", () => {
+            const mediaStream = video.srcObject;
+            const tracks = mediaStream.getTracks();
+            tracks[0].stop();
+         });
+
+         document.getElementById("capture").addEventListener("click", () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/png");
+            photo.src = dataUrl;
+         });
+      });
+
+
       fetchUserDetails();
 
       function openUpdateDetailsModal() {
          $('#userDetailsModal').modal('hide'); // Hide the user details modal
          $('#updateDetailsModal').modal('show'); // Show the update details modal
       }
+
+
+
 
 
       document.addEventListener("DOMContentLoaded", function() {
@@ -353,51 +403,6 @@
             .catch(function(error) {
                console.error('Error updating details:', error);
             });
-      }
-
-
-
-      var webcamOn = false;
-
-      function openCamera(event) {
-         event.preventDefault();
-
-         if (!webcamOn) {
-            const constraints = {
-               video: true
-            };
-
-            navigator.mediaDevices.getUserMedia(constraints)
-               .then(function(stream) {
-                  var video = document.getElementById('webcam');
-                  video.srcObject = stream;
-                  video.play();
-                  webcamOn = true;
-                  document.getElementById('on-button').hidden = true;
-                  video.hidden = false;
-                  document.getElementById('off-button').hidden = false;
-               })
-               .catch(function(err) {
-                  console.error('Error accessing camera:', err);
-               });
-         }
-      }
-
-
-      function captureFrame() {
-         var video = document.getElementById('webcam');
-         var canvas = document.createElement('canvas');
-         var context = canvas.getContext('2d');
-
-         canvas.width = video.videoWidth;
-         canvas.height = video.videoHeight;
-
-         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-         var imageDataURL = canvas.toDataURL('image/png');
-
-         var previewImage = document.getElementById('previewImage');
-         previewImage.src = imageDataURL;
       }
    </script>
 </body>
