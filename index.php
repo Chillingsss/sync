@@ -13,6 +13,8 @@
    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+   <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+
 
 </head>
 <!-- #E5E4E2; -->
@@ -168,18 +170,30 @@
 
                         <!-- camera option -->
 
-                        <div id="webcamDiv" class="camView">
-                           <video id="webcam" width="600" height="440" autoplay></video>
+                        <div class="d-flex justify-content-center">
+                           <video id="webcam" class="embed-responsive-item" autoplay></video>
                         </div>
-                        <div>
-                           <button id="webcamButton">Open Webcam</button>
-                           <button id="stopButton">Stop Webcam</button>
-                           <button id="capture">Capture Image</button>
+                        <div class="row mt-2">
+                           <div class="col-12">
+                              <button id="webcamButton" class="btn btn-primary">Open Webcam</button>
+                              <button id="stopButton" class="btn btn-danger ms-2">Stop Webcam</button>
+                              <button id="capture" class="btn btn-success ms-2">Capture Image</button>
+                           </div>
                         </div>
-                        <canvas id="canvas" style="display: none;"></canvas>
-                        <div class="output">
-                           <img id="photo" alt="Captured Image">
+                        <div class="row mt-2">
+                           <div class="col-12">
+                              <canvas id="canvas" style="display: none;"></canvas>
+                           </div>
                         </div>
+
+                        <div class="row mt-2">
+                           <div class="col-12">
+                              <div class="output">
+                                 <img id="photo" class="img-fluid" alt="Captured Image">
+                              </div>
+                           </div>
+                        </div>
+
 
                         <div class="form-group">
                            <label for="caption">Caption:</label>
@@ -191,6 +205,8 @@
                   <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                      <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+                     <button type="button" class="btn btn-primary" onclick="submitCapturedImage()">Post Captured</button>
+
                   </div>
                </div>
             </div>
@@ -241,7 +257,7 @@
    <!-- Comment Modal -->
    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
-         <div class="modal-content">
+         <div class="modal-content bg-dark text-white">
             <div class="modal-header">
                <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -252,17 +268,16 @@
                <form id="commentForm">
                   <div class="form-group">
                      <label for="commentInput">Comment:</label>
-                     <textarea class="form-control" id="commentInput" rows="3" placeholder="Enter your comment"></textarea>
+                     <textarea class="form-control bg-dark text-white" id="commentInput" rows="3" placeholder="Enter your comment"></textarea>
                   </div>
                </form>
             </div>
             <div class="modal-footer">
                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                <button type="button" class="btn btn-primary" onclick="addComment()">Add Comment</button>
-
             </div>
             <!-- Display area for fetched comments -->
-            <div class="modal-body">
+            <div class="modal-body bg-dark text-white">
                <h5>Comments:</h5>
                <div id="firstname"></div>
                <div id="commentList"></div>
@@ -274,18 +289,14 @@
 
 
 
+
    <script src="js/index.js"></script>
 
    <script>
-      var webcamDiv;
-      var video;
-      var canvas = document.getElementById("canvas");
-      var photo = document.getElementById("photo");
-
       document.addEventListener("DOMContentLoaded", () => {
          const btnWebcam = document.getElementById("webcamButton");
          const btnStop = document.getElementById("stopButton");
-         webcamDiv = document.getElementById("webcamDiv");
+         const modal = document.getElementById("postModal");
 
          btnWebcam.addEventListener("click", () => {
             navigator.mediaDevices.getUserMedia({
@@ -297,15 +308,28 @@
                video.addEventListener("loadedmetadata", () => {
                   video.play();
                });
+               // Keep the modal open while webcam is active
+               modal.style.display = "block";
             }).catch(error => {
                alert(error);
             });
          });
 
+         btnWebcam.addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent default behavior
+            event.stopPropagation(); // Prevent the modal from closing
+            // Rest of your code to start webcam stream
+            openModal(); // Function to open the modal if it's closed
+         });
+
+
+
          btnStop.addEventListener("click", () => {
             const mediaStream = video.srcObject;
             const tracks = mediaStream.getTracks();
             tracks[0].stop();
+            // Close the modal when stopping the webcam
+            modal.style.display = "none";
          });
 
          document.getElementById("capture").addEventListener("click", () => {
@@ -313,9 +337,70 @@
             canvas.height = video.videoHeight;
             canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
             const dataUrl = canvas.toDataURL("image/png");
-            photo.src = dataUrl;
+            previewImage.src = dataUrl;
          });
+
+         document.getElementById("capture").addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent default behavior
+            event.stopPropagation(); // Prevent the modal from closing
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/png");
+            previewImage.src = dataUrl;
+
+            // Stop the webcam stream (if needed)
+            const mediaStream = video.srcObject;
+            const tracks = mediaStream.getTracks();
+            tracks[0].stop();
+
+
+         });
+
+
       });
+
+      function submitCapturedImage() {
+         const userID = localStorage.getItem("id");
+         const formData = new FormData();
+
+         // Capture the image data from the canvas
+         canvas.width = video.videoWidth;
+         canvas.height = video.videoHeight;
+         canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+         const dataUrl = canvas.toDataURL("image/png");
+
+         // Generate a unique filename
+         const timestamp = new Date().getTime();
+         const randomString = Math.random().toString(36).substring(7);
+         const fileName = `image_${timestamp}_${randomString}.png`;
+
+         // Append the image data with a filename to the form data
+         formData.append("file", dataUrl);
+         formData.append("fileName", fileName);
+
+         // Append the userID
+         formData.append("userID", userID);
+
+         axios.post('PHP/upload.php', formData, {
+               headers: {
+                  'Content-Type': 'multipart/form-data'
+               }
+            })
+            .then(function(response) {
+               console.log('Response Data:', response.data);
+               alert(response.data.message || response.data.error);
+               window.location.href = "index.php"; // Redirect to index.php after successful upload
+            })
+            .catch(function(error) {
+               console.error('Error:', error);
+               alert('An error occurred. Please try again.');
+            });
+      }
+
+
+
 
 
       fetchUserDetails();

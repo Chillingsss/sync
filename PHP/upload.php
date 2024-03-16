@@ -14,7 +14,8 @@ try {
     exit;
 }
 
-if (!empty($_FILES['file']['name'])) {
+// Check if file data is received
+if (!empty($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp_name'])) {
     $fileName = $_FILES['file']['name'];
     $fileTmpName = $_FILES['file']['tmp_name'];
     $fileSize = $_FILES['file']['size'];
@@ -25,6 +26,7 @@ if (!empty($_FILES['file']['name'])) {
 
     $userID = isset($_POST['userID']) ? $_POST['userID'] : '';
 
+    // Process file upload
     $fileExt = explode('.', $fileName);
     $fileActualExt = strtolower(end($fileExt));
 
@@ -60,10 +62,10 @@ if (!empty($_FILES['file']['name'])) {
     } else {
         echo json_encode(["error" => "You cannot upload files of this type!"]);
     }
-} else if (empty($_FILES['file']['name'])) {
+} else {
+    // No file uploaded, handle data without file
     $caption = isset($_POST['caption']) ? $_POST['caption'] : '';
 
-    // Retrieve userID from POST data
     $userID = isset($_POST['userID']) ? $_POST['userID'] : '';
 
     $sql = "INSERT INTO uploads (caption, userID) VALUES (:caption, :userID)";
@@ -72,12 +74,10 @@ if (!empty($_FILES['file']['name'])) {
     $stmt->bindParam(':userID', $userID);
 
     if ($stmt->execute()) {
-        echo json_encode(["message" => "File uploaded and inserted into the database successfully!"]);
+        echo json_encode(["message" => "Data inserted into the database successfully!"]);
     } else {
         echo json_encode(["error" => "Error inserting data into the database."]);
     }
-} else {
-    echo json_encode(["error" => "No file was uploaded."]);
 }
 
 $conn = null;

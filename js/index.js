@@ -30,9 +30,17 @@ function submitForm() {
     const userID = localStorage.getItem("id");
     const formData = new FormData(form);
 
-    console.log(form)
+    // Capture the image data from the canvas
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/png");
 
-    formData.append('userID', userID);
+    // Append the image data to the form data
+    formData.append("file", dataUrl);
+
+    // Append the userID
+    formData.append("userID", userID);
 
     axios.post('PHP/upload.php', formData, {
         headers: {
@@ -42,13 +50,19 @@ function submitForm() {
         .then(function (response) {
             console.log('Response Data:', response.data);
             alert(response.data.message || response.data.error);
-            window.location.href = "index.php";
+            window.location.href = "index.php"; // Redirect to index.php after successful upload
         })
         .catch(function (error) {
             console.error('Error:', error);
             alert('An error occurred. Please try again.');
         });
 }
+
+
+
+
+
+
 
 function fetchImages() {
     sessionStorage.removeItem("selectedPostId");
@@ -83,7 +97,8 @@ function fetchImages() {
                                     <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
                                 </button>
                                 
-                                <a href="#" onclick="commentPost(${post.id})" class="text-muted">Comment</a>
+                                <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted">Comment</a>
+
                             
 
                         
@@ -194,29 +209,27 @@ function fetchComments() {
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
-            // Clear previous comments
+
             const commentList = document.getElementById('commentList');
             commentList.innerHTML = '';
 
-            // Populate comments in the modal
             response.data.forEach(comment => {
+
                 const commentContainer = document.createElement('div');
+                commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white');
+                commentContainer.style.borderColor = '#0F0F0F';
+
                 const commentFirstName = document.createElement('div');
+                commentFirstName.classList.add('card-header', 'font-weight-bold');
+                commentFirstName.textContent = comment.firstname;
+
                 const commentItem = document.createElement('div');
-
-                // Set inline styles for side-by-side display
-                commentContainer.style.display = 'flex';
-                commentFirstName.style.flexBasis = '30%'; // Adjust as needed
-                commentFirstName.style.marginRight = '10px'; // Adjust as needed
-
-                commentFirstName.textContent = comment.firstname + ": ";
+                commentItem.classList.add('card-body', 'd-flex', 'flex-column');
                 commentItem.textContent = comment.comment_message;
 
-                // Append first name and comment to the comment container
                 commentContainer.appendChild(commentFirstName);
                 commentContainer.appendChild(commentItem);
 
-                // Append the comment container to the comment list
                 commentList.appendChild(commentContainer);
             });
 
@@ -227,6 +240,8 @@ function fetchComments() {
             console.error('Error fetching comments:', error);
         });
 }
+
+
 
 
 
@@ -261,10 +276,16 @@ function addComment() {
 
 
 function commentPost(postId) {
+    // Show the comment modal
     $('#commentModal').modal('show');
+
+    // Store the selected post ID in sessionStorage
     sessionStorage.setItem("selectedPostId", postId);
+
+    // Fetch and display comments for the selected post
     fetchComments();
 }
+
 
 
 
