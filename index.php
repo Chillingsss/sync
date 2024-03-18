@@ -164,20 +164,21 @@
                            <!-- Display selected image -->
                            <label for="file" style="cursor: pointer;">
                               <span style="color: #E4E6EB;">Choose File </span>
-                              <img id="previewImage" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; border-radius:30px" />
+                              <img id="previewImage" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; border-radius: 30px; display: none;" />
+                              <h6 id="noImageText" style="color: #E4E6EB;">No image selected</h6>
                            </label>
+
                         </div>
 
                         <!-- camera option -->
 
                         <div class="d-flex justify-content-center">
-                           <video id="webcam" class="embed-responsive-item" autoplay></video>
+                           <video id="webcam" class="embed-responsive-item" autoplay style="width: 100%; max-width: 600px;"></video>
                         </div>
                         <div class="row mt-2">
                            <div class="col-12">
-                              <button id="webcamButton" class="btn btn-primary">Open Webcam</button>
-                              <button id="stopButton" class="btn btn-danger ms-2">Stop Webcam</button>
-                              <button id="capture" class="btn btn-success ms-2">Capture Image</button>
+                              <a id="webcamButton"><img src="../sync/img/camera.png" alt="" style="height: 30px; width:30px;"></a>
+                              <button id="stopButton" style="background: transparent; border: none;"><img src="../sync/img/close.png" alt="" style="height: 30px; width: 30px;"></button>
                            </div>
                         </div>
                         <div class="row mt-2">
@@ -186,13 +187,6 @@
                            </div>
                         </div>
 
-                        <div class="row mt-2">
-                           <div class="col-12">
-                              <div class="output">
-                                 <img id="photo" class="img-fluid" alt="Captured Image">
-                              </div>
-                           </div>
-                        </div>
 
 
                         <div class="form-group">
@@ -203,12 +197,13 @@
                      </form>
                   </div>
 
-                  <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                     <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
-
-                     <button type="button" class="btn btn-primary" onclick="submitCapturedImage()">Post Captured</button>
-
+                  <div class="modal-footer d-flex justify-content-between">
+                     <button type="button" class="btn btn-success" onclick="submitCapturedImage()">Post
+                        Captured</button>
+                     <div>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+                     </div>
                   </div>
                </div>
             </div>
@@ -295,6 +290,58 @@
    <script src="js/index.js"></script>
 
    <script>
+      // Add an event listener to the file input to detect changes
+      document.addEventListener("DOMContentLoaded", () => {
+         const btnWebcam = document.getElementById("webcamButton");
+         const btnStop = document.getElementById("stopButton");
+         const video = document.getElementById("webcam");
+         const canvas = document.getElementById("canvas");
+
+         const chooseFileLabel = document.querySelector('label[for="file"]');
+
+         btnStop.style.display = "none";
+
+         btnWebcam.addEventListener("click", () => {
+            // Show the stop button
+            btnStop.style.display = "inline";
+            // Hide the camera button
+            btnWebcam.style.display = "none";
+            // Hide the "Choose File" label
+            chooseFileLabel.style.display = "none";
+
+            // Start webcam
+            navigator.mediaDevices.getUserMedia({
+               video: true,
+               audio: false
+            }).then(stream => {
+               video.srcObject = stream;
+               video.addEventListener("loadedmetadata", () => {
+                  video.play();
+               });
+            }).catch(error => {
+               alert(error);
+            });
+         });
+
+         btnStop.addEventListener("click", () => {
+            // Hide the stop button
+            btnStop.style.display = "none";
+            // Show the camera button
+            btnWebcam.style.display = "inline";
+
+            // Stop webcam
+            const mediaStream = video.srcObject;
+            const tracks = mediaStream.getTracks();
+            tracks.forEach(track => track.stop());
+
+            // Prevent the modal from closing
+            event.stopPropagation();
+         });
+      });
+
+
+
+
       document.addEventListener("DOMContentLoaded", () => {
          const btnWebcam = document.getElementById("webcamButton");
          const btnStop = document.getElementById("stopButton");

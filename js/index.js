@@ -87,11 +87,11 @@ function fetchImages() {
 
                             
                             <div class="d-flex align-items-center">
-                                <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px;">
-                                    <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
+                                <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px; background: transparent; border: none;">
+                                    <span id="likeCount-${post.id}">${post.likes || 0}</span>  &nbsp; <img src="../sync/img/like.png" alt="" style="height: 30px; width: 30px;">
                                 </button>
                                 
-                                <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted">Comment</a>
+                                <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted"><img src="../sync/img/com.png" alt="" style="height: 30px; width: 30px;"></a>
 
                             
 

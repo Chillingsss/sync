@@ -114,6 +114,28 @@
                                     </label>
                                 </div>
 
+
+                                <!-- camera option -->
+
+                                <div class="d-flex justify-content-center">
+                                    <video id="webcam" class="embed-responsive-item" autoplay></video>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <a id="webcamButton"><img src="../sync/img/camera.png" alt=""
+                                                style="height: 30px; width:30px;"></a>
+                                        <button id="stopButton" style="background: transparent; border: none;"><img
+                                                src="../sync/img/close.png" alt=""
+                                                style="height: 30px; width: 30px;"></button>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-12">
+                                        <canvas id="canvas" style="display: none;"></canvas>
+                                    </div>
+                                </div>
+
+
                                 <div class="form-group">
                                     <label for="caption">Caption:</label>
                                     <textarea class="form-control" id="caption" name="caption"
@@ -122,10 +144,15 @@
                                 </div>
                             </form>
                         </div>
-                        <div class=" modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+                        <div class="modal-footer d-flex justify-content-between">
+                            <button type="button" class="btn btn-success" onclick="submitCapturedImage()">Post
+                                Captured</button>
+                            <div>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+                            </div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -255,6 +282,141 @@
                 .catch(function (error) {
                     console.error('Error updating details:', error);
                 });
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnWebcam = document.getElementById("webcamButton");
+            const btnStop = document.getElementById("stopButton");
+            const modal = document.getElementById("postModal");
+
+            btnWebcam.addEventListener("click", () => {
+                navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                }).then(stream => {
+                    video = document.getElementById("webcam");
+                    video.srcObject = stream;
+                    video.addEventListener("loadedmetadata", () => {
+                        video.play();
+                    });
+                    // Keep the modal open while webcam is active
+                    modal.style.display = "block";
+                }).catch(error => {
+                    alert(error);
+                });
+            });
+
+            btnWebcam.addEventListener("click", (event) => {
+                event.preventDefault(); // Prevent default behavior
+                event.stopPropagation(); // Prevent the modal from closing
+                // Rest of your code to start webcam stream
+                openModal(); // Function to open the modal if it's closed
+            });
+
+
+
+            btnStop.addEventListener("click", () => {
+                const mediaStream = video.srcObject;
+                const tracks = mediaStream.getTracks();
+                tracks[0].stop();
+                modal.style.display = "none";
+            });
+
+            document.getElementById("capture").addEventListener("click", () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL("image/png");
+                console.log("haha", dataUrl);
+                previewImage.src = dataUrl;
+            });
+
+            document.getElementById("capture").addEventListener("click", (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataUrl = canvas.toDataURL("image/png");
+                console.log("damn", dataUrl);
+
+                // Generate a unique filename based on the current timestamp
+                const filename = `captured_image_${Date.now()}.png`;
+                console.log("haha", filename);
+
+                // Assign the data URL to the preview image
+                previewImage.src = dataUrl;
+
+                // Stop the webcam
+                // const mediaStream = video.srcObject;
+                // const tracks = mediaStream.getTracks();
+                // tracks[0].stop();
+
+                // Do something with the filename, like submit it along with the form data
+                console.log("Filename:", filename);
+            });
+
+
+
+        });
+
+        function submitCapturedImage() {
+            const userID = localStorage.getItem("id");
+            const caption = document.getElementById("caption").value; // Retrieve the caption value
+
+            const formData = new FormData();
+
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+            const dataUrl = canvas.toDataURL("image/png");
+
+            // Generate a unique filename based on the current timestamp and a random string
+            const timestamp = new Date().getTime();
+            const randomString = Math.random().toString(36).substring(7);
+            const fileName = `image_${timestamp}_${randomString}.png`;
+
+            // Create a Blob from the data URL
+            const blob = dataURLtoBlob(dataUrl);
+
+            // Append the Blob to the FormData object
+            formData.append("file", blob, fileName);
+
+            // Append the caption and userID
+            formData.append("caption", caption);
+            formData.append("userID", userID);
+
+            // Send the FormData object to the server using axios
+            axios.post('PHP/uploads.php', formData)
+                .then(function (response) {
+                    console.log('Response Data:', response.data);
+                    alert(response.data.message || response.data.error);
+                    window.location.href = "index.php"; // Redirect to index.php after successful upload
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        }
+
+
+
+        // Function to convert data URL to Blob
+        function dataURLtoBlob(dataURL) {
+            const parts = dataURL.split(';base64,');
+            const contentType = parts[0].split(':')[1];
+            const raw = window.atob(parts[1]);
+            const rawLength = raw.length;
+            const uInt8Array = new Uint8Array(rawLength);
+
+            for (let i = 0; i < rawLength; ++i) {
+                uInt8Array[i] = raw.charCodeAt(i);
+            }
+
+            return new Blob([uInt8Array], {
+                type: contentType
+            });
         }
     </script>
 
