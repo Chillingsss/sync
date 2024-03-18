@@ -30,17 +30,9 @@ function submitForm() {
     const userID = localStorage.getItem("id");
     const formData = new FormData(form);
 
-    // Capture the image data from the canvas
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL("image/png");
+    console.log(form)
 
-    // Append the image data to the form data
-    formData.append("file", dataUrl);
-
-    // Append the userID
-    formData.append("userID", userID);
+    formData.append('userID', userID);
 
     axios.post('PHP/upload.php', formData, {
         headers: {
@@ -49,11 +41,13 @@ function submitForm() {
     })
         .then(function (response) {
             console.log('Response Data:', response.data);
+            // Handle success
             alert(response.data.message || response.data.error);
-            window.location.href = "index.php"; // Redirect to index.php after successful upload
+            window.location.href = "index.php";
         })
         .catch(function (error) {
             console.error('Error:', error);
+            // Handle error
             alert('An error occurred. Please try again.');
         });
 }
@@ -243,9 +237,6 @@ function fetchComments() {
 
 
 
-
-
-
 function addComment() {
     const commentInput = document.getElementById(`commentInput`).value;
     // const comment = commentInput.value;
@@ -266,8 +257,9 @@ function addComment() {
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
-            console.log('Comment added successfully:', response.data);
             fetchComments();
+            console.log('Comment added successfully:', response.data);
+
         })
         .catch(error => {
             console.error('Error adding comment:', error);
@@ -276,13 +268,8 @@ function addComment() {
 
 
 function commentPost(postId) {
-    // Show the comment modal
     $('#commentModal').modal('show');
-
-    // Store the selected post ID in sessionStorage
     sessionStorage.setItem("selectedPostId", postId);
-
-    // Fetch and display comments for the selected post
     fetchComments();
 }
 

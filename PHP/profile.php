@@ -11,7 +11,7 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-$loggedInUserId = $_SESSION['id']; // Assuming the user ID is stored in the session
+$loggedInUserId = $_SESSION['id'];
 
 try {
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
@@ -34,7 +34,5 @@ $stmt->bindParam(':loggedInUserId', $loggedInUserId, PDO::PARAM_INT);
 $stmt->execute();
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Output the posts data as JSON
 header('Content-Type: application/json');
 echo json_encode($posts);
-?>

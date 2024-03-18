@@ -199,12 +199,14 @@
                            <label for="caption">Caption:</label>
                            <textarea class="form-control" id="caption" name="caption" placeholder="What's on your mind?" style="background-color: #242526; color: #E4E6EB;"></textarea>
                         </div>
+
                      </form>
                   </div>
 
                   <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                      <button type="button" class="btn btn-primary" onclick="submitForm()">Post</button>
+
                      <button type="button" class="btn btn-primary" onclick="submitCapturedImage()">Post Captured</button>
 
                   </div>
@@ -328,7 +330,6 @@
             const mediaStream = video.srcObject;
             const tracks = mediaStream.getTracks();
             tracks[0].stop();
-            // Close the modal when stopping the webcam
             modal.style.display = "none";
          });
 
@@ -337,57 +338,68 @@
             canvas.height = video.videoHeight;
             canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
             const dataUrl = canvas.toDataURL("image/png");
+            console.log("haha", dataUrl);
             previewImage.src = dataUrl;
          });
 
          document.getElementById("capture").addEventListener("click", (event) => {
-            event.preventDefault(); // Prevent default behavior
-            event.stopPropagation(); // Prevent the modal from closing
+            event.preventDefault();
+            event.stopPropagation();
 
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
             const dataUrl = canvas.toDataURL("image/png");
+            console.log("damn", dataUrl);
+
+            // Generate a unique filename based on the current timestamp
+            const filename = `captured_image_${Date.now()}.png`;
+            console.log("haha", filename);
+
+            // Assign the data URL to the preview image
             previewImage.src = dataUrl;
 
-            // Stop the webcam stream (if needed)
-            const mediaStream = video.srcObject;
-            const tracks = mediaStream.getTracks();
-            tracks[0].stop();
+            // Stop the webcam
+            // const mediaStream = video.srcObject;
+            // const tracks = mediaStream.getTracks();
+            // tracks[0].stop();
 
-
+            // Do something with the filename, like submit it along with the form data
+            console.log("Filename:", filename);
          });
+
 
 
       });
 
       function submitCapturedImage() {
          const userID = localStorage.getItem("id");
+         const caption = document.getElementById("caption").value; // Retrieve the caption value
+
          const formData = new FormData();
 
-         // Capture the image data from the canvas
          canvas.width = video.videoWidth;
          canvas.height = video.videoHeight;
          canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
          const dataUrl = canvas.toDataURL("image/png");
 
-         // Generate a unique filename
+         // Generate a unique filename based on the current timestamp and a random string
          const timestamp = new Date().getTime();
          const randomString = Math.random().toString(36).substring(7);
          const fileName = `image_${timestamp}_${randomString}.png`;
 
-         // Append the image data with a filename to the form data
-         formData.append("file", dataUrl);
-         formData.append("fileName", fileName);
+         // Create a Blob from the data URL
+         const blob = dataURLtoBlob(dataUrl);
 
-         // Append the userID
+         // Append the Blob to the FormData object
+         formData.append("file", blob, fileName);
+
+         // Append the caption and userID
+         formData.append("caption", caption);
          formData.append("userID", userID);
 
-         axios.post('PHP/upload.php', formData, {
-               headers: {
-                  'Content-Type': 'multipart/form-data'
-               }
-            })
+         // Send the FormData object to the server using axios
+         axios.post('PHP/uploads.php', formData)
             .then(function(response) {
                console.log('Response Data:', response.data);
                alert(response.data.message || response.data.error);
@@ -398,6 +410,26 @@
                alert('An error occurred. Please try again.');
             });
       }
+
+
+
+      // Function to convert data URL to Blob
+      function dataURLtoBlob(dataURL) {
+         const parts = dataURL.split(';base64,');
+         const contentType = parts[0].split(':')[1];
+         const raw = window.atob(parts[1]);
+         const rawLength = raw.length;
+         const uInt8Array = new Uint8Array(rawLength);
+
+         for (let i = 0; i < rawLength; ++i) {
+            uInt8Array[i] = raw.charCodeAt(i);
+         }
+
+         return new Blob([uInt8Array], {
+            type: contentType
+         });
+      }
+
 
 
 
