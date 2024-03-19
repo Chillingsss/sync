@@ -1,5 +1,194 @@
 const isLoggedIn = localStorage.getItem("isUserLoggedIn");
 
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btnWebcam = document.getElementById("webcamButton");
+    const btnStop = document.getElementById("stopButton");
+    const video = document.getElementById("webcam");
+    const canvas = document.getElementById("canvas");
+
+    const chooseFileLabel = document.querySelector('label[for="file"]');
+
+    btnStop.style.display = "none";
+
+    btnWebcam.addEventListener("click", () => {
+
+        btnStop.style.display = "inline";
+
+        btnWebcam.style.display = "none";
+
+        chooseFileLabel.style.display = "none";
+
+        const postButton = document.querySelector('.modal-footer .btn-primary');
+        if (postButton && getComputedStyle(postButton).display !== 'none') {
+            postButton.style.display = "none";
+        }
+
+
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        }).then(stream => {
+            video.srcObject = stream;
+            video.addEventListener("loadedmetadata", () => {
+                video.play();
+            });
+        }).catch(error => {
+            alert(error);
+        });
+    });
+
+
+
+    btnStop.addEventListener("click", () => {
+
+        btnStop.style.display = "none";
+
+        btnWebcam.style.display = "inline";
+
+
+        const mediaStream = video.srcObject;
+        const tracks = mediaStream.getTracks();
+        tracks.forEach(track => track.stop());
+
+
+        event.stopPropagation();
+    });
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btnWebcam = document.getElementById("webcamButton");
+    const btnStop = document.getElementById("stopButton");
+    const modal = document.getElementById("postModal");
+
+    btnWebcam.addEventListener("click", () => {
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        }).then(stream => {
+            video = document.getElementById("webcam");
+            video.srcObject = stream;
+            video.addEventListener("loadedmetadata", () => {
+                video.play();
+            });
+
+            modal.style.display = "block";
+        }).catch(error => {
+            alert(error);
+        });
+    });
+
+    btnWebcam.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openModal();
+    });
+
+
+
+    btnStop.addEventListener("click", () => {
+        const mediaStream = video.srcObject;
+        const tracks = mediaStream.getTracks();
+        tracks[0].stop();
+        modal.style.display = "none";
+    });
+
+    document.getElementById("capture").addEventListener("click", () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/png");
+        console.log("haha", dataUrl);
+        previewImage.src = dataUrl;
+    });
+
+    document.getElementById("capture").addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/png");
+        console.log("damn", dataUrl);
+
+
+        const filename = `captured_image_${Date.now()}.png`;
+        console.log("haha", filename);
+
+
+        previewImage.src = dataUrl;
+
+        console.log("Filename:", filename);
+    });
+
+
+
+});
+
+function submitCapturedImage() {
+    const userID = localStorage.getItem("id");
+    const caption = document.getElementById("caption").value; // Retrieve the caption value
+
+    const formData = new FormData();
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/png");
+
+    // Generate a unique filename based on the current timestamp and a random string
+    const timestamp = new Date().getTime();
+    const randomString = Math.random().toString(36).substring(7);
+    const fileName = `image_${timestamp}_${randomString}.png`;
+
+    // Create a Blob from the data URL
+    const blob = dataURLtoBlob(dataUrl);
+
+    // Append the Blob to the FormData object
+    formData.append("file", blob, fileName);
+
+    // Append the caption and userID
+    formData.append("caption", caption);
+    formData.append("userID", userID);
+
+    // Send the FormData object to the server using axios
+    axios.post('PHP/uploads.php', formData)
+        .then(function (response) {
+            console.log('Response Data:', response.data);
+            alert(response.data.message || response.data.error);
+            window.location.href = "index.php"; // Redirect to index.php after successful upload
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+}
+
+
+
+// Function to convert data URL to Blob
+function dataURLtoBlob(dataURL) {
+    const parts = dataURL.split(';base64,');
+    const contentType = parts[0].split(':')[1];
+    const raw = window.atob(parts[1]);
+    const rawLength = raw.length;
+    const uInt8Array = new Uint8Array(rawLength);
+
+    for (let i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], {
+        type: contentType
+    });
+}
+
+
+
 document.getElementById('file').addEventListener('change', function (event) {
     const fileInput = event.target;
     const previewImage = document.getElementById('previewImage');
@@ -59,6 +248,7 @@ function submitForm() {
 
 
 function fetchImages() {
+
     sessionStorage.removeItem("selectedPostId");
     fetch('fetch_images.php')
         .then(response => response.json())
@@ -92,9 +282,6 @@ function fetchImages() {
                                 </button>
                                 
                                 <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted"><img src="../sync/img/com.png" alt="" style="height: 30px; width: 30px;"></a>
-
-                            
-
                         
                             </div>
 
@@ -115,7 +302,8 @@ function fetchImages() {
         });
 }
 
-function heartPost(postId) {
+async function heartPost(postId) {
+    console.log("gi tawag ang heart post")
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
         postId: postId,
@@ -124,33 +312,27 @@ function heartPost(postId) {
     const formData = new FormData();
     formData.append("operation", "heartpost");
     formData.append("json", JSON.stringify(jsonData));
+    console.log("JSON DATA MO TO", JSON.stringify(jsonData));
 
     const likeCountElement = document.getElementById(`likeCount-${postId}`);
-    let isLiked = likeCountElement && likeCountElement.dataset.liked === 'true';
 
-    axios.post(`http://localhost/sync/PHP/login.php`, formData)
-        .then(response => {
-            if (response.data === 1) {
-                const currentLikes = parseInt(likeCountElement.textContent);
+    try {
+        const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
+        console.log("response sa heartpost", response);
+        const currentLikes = parseInt(likeCountElement.textContent);
 
-                if (!isLiked) {
-                    console.log('Post liked successfully:', response);
-                    likeCountElement.textContent = currentLikes + 1;
-                } else {
-                    console.log('Post unliked successfully:', response);
-                    likeCountElement.textContent = Math.max(currentLikes - 1, 0);
-                }
-
-                isLiked = !isLiked;
-                likeCountElement.dataset.liked = isLiked ? 'true' : 'false';
-            } else {
-                console.error('Error interacting with post:', response);
-            }
-        })
-        .catch(error => {
-            console.error('Error interacting with post:', error);
-        });
+        if (response.data === -5) {
+            console.log('Post unliked successfully:', response);
+            likeCountElement.textContent = Math.max(currentLikes - 1, 0);
+        } else {
+            console.log('Post liked successfully:', response);
+            likeCountElement.textContent = currentLikes + 1;
+        }
+    } catch (error) {
+        console.error('Error interacting with post:', error);
+    }
 }
+
 
 
 // function openPostDetails(postId) {
@@ -295,7 +477,6 @@ function showUpdateForm() {
     document.getElementById('update-details-form-container').style.display = 'block';
 }
 
-// Make sure to include Axios in your HTML
 
 // function updateDetails() {
 //     // Get updated details from the form
@@ -400,55 +581,90 @@ function fetchUserDetails() {
 
 
 
-// Assume this code is in your main JavaScript file (e.g., js/index.js)
-// document.addEventListener("DOMContentLoaded", function () {
-//     // Fetch user details and update the modal content
-//     axios.get('http://localhost/sync/PHP/fetch_user_details.php')
-//         .then(response => {
-//             const userData = response.data;
 
-//             // Update the modal content with user details
-//             document.getElementById("userFirstname").textContent = userData.firstname;
-//             // Add more lines to update other elements as needed
+fetchUserDetails();
 
-//             // Optional: You can also update the content inside the modal
-//             document.getElementById("userDetailsContent").innerHTML = `
-//                 <p><strong>First Name:</strong> ${userData.firstname}</p>
-//                 <p><strong>Middle Name:</strong> ${userData.middlename}</p>
-//                 <p><strong>Last Name:</strong> ${userData.lastname}</p>
-//                 <p><strong>Email:</strong> ${userData.email}</p>
-//                 <p><strong>Contact Number:</strong> ${userData.cpnumber}</p>
-//                 <p><strong>Username:</strong> ${userData.username}</p>
-//                 <p><strong>Password:</strong> ${userData.password}</p>
-
-//             `;
-//         })
-//         .catch(error => {
-//             console.error('Error fetching user details:', error);
-//         });
-// });
+function openUpdateDetailsModal() {
+    $('#userDetailsModal').modal('hide'); // Hide the user details modal
+    $('#updateDetailsModal').modal('show'); // Show the update details modal
+}
 
 
-// Function to fetch user details using Axios
-// function fetchUserDetails() {
-//     axios.get('your_server_endpoint_for_user_details')
-//         .then(response => {
-//             const userData = response.data;
-//             console.log('User data:', userData) // Assuming your user details are in the response.data
 
-//             // Update the content of the spans with the received user data
-//             document.getElementById("firstname").textContent = userData.firstname;
-//             document.getElementById("middlename").textContent = userData.middlename;
-//             document.getElementById("lastname").textContent = userData.lastname;
-//             document.getElementById("email").textContent = userData.email;
-//             document.getElementById("cpnumber").textContent = userData.cpnumber;
-//             document.getElementById("username").textContent = userData.username;
-//             document.getElementById("password").textContent = userData.password;
-//         })
-//         .catch(error => {
-//             console.error('Error fetching user details:', error);
-//         });
-// }
 
-// // Call the function to fetch and display user details
 
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("damn");
+    const userId = sessionStorage.getItem('userId');
+
+    if (userId) {
+        axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+            .then(response => {
+                console.log('User details response:', response.data);
+                const userData = response.data;
+
+                document.getElementById("userFirstname").textContent = userData.firstname;
+
+                document.getElementById("userDetailsContent").innerHTML = `
+               <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
+               <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
+               <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
+               <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
+               <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
+               <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
+               <p><strong>Password:</strong> ${localStorage.getItem("password")}</p>
+           `;
+            })
+            .catch(error => {
+                console.error('Error fetching user details:', error);
+            });
+    } else {
+        console.error('userId not available');
+    }
+});
+
+function openUpdateDetailsForm() {
+    document.getElementById('update-details-form-container').style.display = 'block';
+}
+
+function updateDetails() {
+    console.log("update");
+
+    var updatedFirstname = document.getElementById("updated-firstname").value;
+    var updatedMiddlename = document.getElementById("updated-middlename").value;
+    var updatedLastname = document.getElementById("updated-lastname").value;
+    var updatedEmail = document.getElementById("updated-email").value;
+    var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+    var updatedUsername = document.getElementById("updated-username").value;
+    var updatedPassword = document.getElementById("updated-password").value;
+
+
+    var formData = new FormData();
+    formData.append("operation", "updateDetails");
+    formData.append("json", JSON.stringify({
+        "updated-firstname": updatedFirstname,
+        "updated-middlename": updatedMiddlename,
+        "updated-lastname": updatedLastname,
+        "updated-email": updatedEmail,
+        "updated-cpnumber": updatedCpnumber,
+        "updated-username": updatedUsername,
+        "updated-password": updatedPassword,
+        "userId": sessionStorage.getItem("userId")
+    }));
+
+    axios.post('http://localhost/sync/PHP/login.php', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        },
+    })
+        .then(function (response) {
+            console.log(response.data);
+
+            window.location.reload();
+
+
+        })
+        .catch(function (error) {
+            console.error('Error updating details:', error);
+        });
+}

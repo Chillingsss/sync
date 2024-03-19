@@ -91,6 +91,7 @@ class Data
                 $stmtUnlike->bindParam(":postId", $postId);
                 $stmtUnlike->bindParam(":userId", $userId);
                 $stmtUnlike->execute();
+                return -5;
             } else {
                 $sqlLike = "INSERT INTO tbl_points (point_postId, point_userId) VALUES (:postId, :userId)";
                 $stmtLike = $conn->prepare($sqlLike);
@@ -129,6 +130,9 @@ class Data
 
         return $stmt->rowCount() > 0 ? json_encode($stmt->fetchAll(PDO::FETCH_ASSOC)) : 0;
     }
+
+
+
 
     function updateDetails($json)
     {

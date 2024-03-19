@@ -109,16 +109,18 @@
                                     <label for="file" style="cursor: pointer;">
                                         <span style="color: #E4E6EB;">Choose File </span>
                                         <img id="previewImage" src="#" alt="Selected Image"
-                                            style="max-width: 100%; max-height: 200px; border-radius:30px" />
-
+                                            style="max-width: 100%; max-height: 200px; border-radius: 30px; display: none;" />
+                                        <h6 id="noImageText" style="color: #E4E6EB;">No image selected</h6>
                                     </label>
+
                                 </div>
 
 
                                 <!-- camera option -->
 
                                 <div class="d-flex justify-content-center">
-                                    <video id="webcam" class="embed-responsive-item" autoplay></video>
+                                    <video id="webcam" class="embed-responsive-item" autoplay
+                                        style="width: 100%; max-width: 600px;"></video>
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-12">
@@ -145,7 +147,7 @@
                             </form>
                         </div>
                         <div class="modal-footer d-flex justify-content-between">
-                            <button type="button" class="btn btn-success" onclick="submitCapturedImage()">Post
+                            <button type="button" class="btn btn-success" onclick="submitCapturedImageProfile()">Post
                                 Captured</button>
                             <div>
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -196,6 +198,78 @@
             </div>
         </div>
     </div>
+
+
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="background-color: #242526;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel" style="color: #E4E6EB;">Post Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="postDetails">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="userPostsModal" tabindex="-1" role="dialog" aria-labelledby="userPostsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="background-color: #242526;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userPostsModalLabel" style="color: #E4E6EB;">User Posts</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="userPostsModalBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="commentInput">Comment:</label>
+                            <textarea class="form-control bg-dark text-white" id="commentInput" rows="3"
+                                placeholder="Enter your comment"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addComment()">Add Comment</button>
+                </div>
+                <!-- Display area for fetched comments -->
+                <div class="modal-body bg-dark text-white">
+                    <h5>Comments:</h5>
+                    <div id="firstname"></div>
+                    <div id="commentList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 
 
     <script src="js/index.js"></script>

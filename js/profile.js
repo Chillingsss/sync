@@ -81,17 +81,13 @@ function fetchUserPosts() {
                     </div>
 
                     <div class="d-flex align-items-center">
-                                <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px;">
-                                    <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
+                                <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px; background: transparent; border: none;">
+                                    <span id="likeCount-${post.id}">${post.likes || 0}</span>  &nbsp; <img src="../sync/img/like.png" alt="" style="height: 30px; width: 30px;">
                                 </button>
-                                <ul id="comments-${post.postId}" class="list-unstyled mr-3"></ul>
-                                <form onsubmit="addComment(event, ${post.postId})" class="d-flex">
-                                    <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="comment-${post.postId}" placeholder="Add a comment" required>
-                                    <button type="submit" class="btn">
-                                        <img src="img/comment.png" alt="Sync Comment">
-                                    </button>
-                                </form>
-                            </div>
+                                
+                                <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted"><img src="../sync/img/com.png" alt="" style="height: 30px; width: 30px;"></a>
+                        
+                     </div>
                 </div>
             `;
 
@@ -156,7 +152,8 @@ function submitEdit(postId) {
 }
 
 
-function heartPost(postId) {
+async function heartPost(postId) {
+    console.log("gi tawag ang heart post")
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
         postId: postId,
@@ -165,35 +162,108 @@ function heartPost(postId) {
     const formData = new FormData();
     formData.append("operation", "heartpost");
     formData.append("json", JSON.stringify(jsonData));
+    console.log("JSON DATA MO TO", JSON.stringify(jsonData));
 
-    // Check if the user has already liked the post
     const likeCountElement = document.getElementById(`likeCount-${postId}`);
-    const isLiked = likeCountElement && likeCountElement.dataset.liked === 'true';
+
+    try {
+        const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
+        console.log("response sa heartpost", response);
+        const currentLikes = parseInt(likeCountElement.textContent);
+
+        if (response.data === -5) {
+            console.log('Post unliked successfully:', response);
+            likeCountElement.textContent = Math.max(currentLikes - 1, 0);
+        } else {
+            console.log('Post liked successfully:', response);
+            likeCountElement.textContent = currentLikes + 1;
+        }
+    } catch (error) {
+        console.error('Error interacting with post:', error);
+    }
+}
+
+
+
+function fetchComments() {
+    const jsonData = {
+        uploadId: sessionStorage.getItem("selectedPostId"),
+    };
+
+    const formData = new FormData();
+    formData.append("json", JSON.stringify(jsonData));
+    formData.append("operation", "fetchComment")
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
-            if (response.data === 1) {
 
-                // If liked successfully, update the like count
-                const currentLikes = parseInt(likeCountElement.textContent);
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '';
 
-                if (!isLiked) {
-                    console.log('Post liked successfully:', response);
-                    likeCountElement.textContent = currentLikes + 1;
-                    likeCountElement.dataset.liked = 'true';
-                } else {
+            response.data.forEach(comment => {
 
-                    console.log('Post unliked successfully:', response);
-                    likeCountElement.textContent = Math.max(currentLikes - 1, 0); // Ensure it's not negative
-                    likeCountElement.dataset.liked = 'false';
-                }
-            } else {
-                console.error('Error interacting with post:', response);
-            }
+                const commentContainer = document.createElement('div');
+                commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white');
+                commentContainer.style.borderColor = '#0F0F0F';
+
+                const commentFirstName = document.createElement('div');
+                commentFirstName.classList.add('card-header', 'font-weight-bold');
+                commentFirstName.textContent = comment.firstname;
+
+                const commentItem = document.createElement('div');
+                commentItem.classList.add('card-body', 'd-flex', 'flex-column');
+                commentItem.textContent = comment.comment_message;
+
+                commentContainer.appendChild(commentFirstName);
+                commentContainer.appendChild(commentItem);
+
+                commentList.appendChild(commentContainer);
+            });
+
+            // Show the comment modal
+            $('#commentModal').modal('show');
         })
         .catch(error => {
-            console.error('Error interacting with post:', error);
+            console.error('Error fetching comments:', error);
         });
+}
+
+
+
+function addComment() {
+    const commentInput = document.getElementById(`commentInput`).value;
+    // const comment = commentInput.value;
+    // console.log("postIDDDD", postId);
+    const postId = sessionStorage.getItem("selectedPostId");
+    const userId = sessionStorage.getItem('userId');
+    const jsonData = {
+        uploadId: postId,
+        userId: userId,
+        comment_message: commentInput,
+    };
+
+    console.log("JsonData", JSON.stringify(jsonData));
+
+    const formData = new FormData();
+    formData.append("json", JSON.stringify(jsonData));
+    formData.append("operation", "commentPost")
+
+    axios.post(`http://localhost/sync/PHP/login.php`, formData)
+        .then(response => {
+            fetchComments();
+            console.log('Comment added successfully:', response.data);
+
+        })
+        .catch(error => {
+            console.error('Error adding comment:', error);
+        });
+}
+
+
+function commentPost(postId) {
+    $('#commentModal').modal('show');
+    sessionStorage.setItem("selectedPostId", postId);
+    fetchComments();
 }
 
 // function submitEdit(postId) {
@@ -293,3 +363,191 @@ function fetchImages() {
 // }
 
 fetchUserPosts();
+
+
+
+//camera grrr
+document.addEventListener("DOMContentLoaded", () => {
+    const btnWebcam = document.getElementById("webcamButton");
+    const btnStop = document.getElementById("stopButton");
+    const video = document.getElementById("webcam");
+    const canvas = document.getElementById("canvas");
+
+    const chooseFileLabel = document.querySelector('label[for="file"]');
+
+    btnStop.style.display = "none";
+
+    btnWebcam.addEventListener("click", () => {
+        // Show the stop button
+        btnStop.style.display = "inline";
+        // Hide the camera button
+        btnWebcam.style.display = "none";
+        // Hide the "Choose File" label
+        chooseFileLabel.style.display = "none";
+
+        // Start webcam
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        }).then(stream => {
+            video.srcObject = stream;
+            video.addEventListener("loadedmetadata", () => {
+                video.play();
+            });
+        }).catch(error => {
+            alert(error);
+        });
+    });
+
+    btnStop.addEventListener("click", () => {
+        // Hide the stop button
+        btnStop.style.display = "none";
+        // Show the camera button
+        btnWebcam.style.display = "inline";
+
+        // Stop webcam
+        const mediaStream = video.srcObject;
+        const tracks = mediaStream.getTracks();
+        tracks.forEach(track => track.stop());
+
+        // Prevent the modal from closing
+        event.stopPropagation();
+    });
+});
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btnWebcam = document.getElementById("webcamButton");
+    const btnStop = document.getElementById("stopButton");
+    const modal = document.getElementById("postModal");
+
+    btnWebcam.addEventListener("click", () => {
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: false
+        }).then(stream => {
+            video = document.getElementById("webcam");
+            video.srcObject = stream;
+            video.addEventListener("loadedmetadata", () => {
+                video.play();
+            });
+            // Keep the modal open while webcam is active
+            modal.style.display = "block";
+        }).catch(error => {
+            alert(error);
+        });
+    });
+
+    btnWebcam.addEventListener("click", (event) => {
+        event.preventDefault(); // Prevent default behavior
+        event.stopPropagation(); // Prevent the modal from closing
+        // Rest of your code to start webcam stream
+        openModal(); // Function to open the modal if it's closed
+    });
+
+
+
+    btnStop.addEventListener("click", () => {
+        const mediaStream = video.srcObject;
+        const tracks = mediaStream.getTracks();
+        tracks[0].stop();
+        modal.style.display = "none";
+    });
+
+    document.getElementById("capture").addEventListener("click", () => {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/png");
+        console.log("haha", dataUrl);
+        previewImage.src = dataUrl;
+    });
+
+    document.getElementById("capture").addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/png");
+        console.log("damn", dataUrl);
+
+        // Generate a unique filename based on the current timestamp
+        const filename = `captured_image_${Date.now()}.png`;
+        console.log("haha", filename);
+
+        // Assign the data URL to the preview image
+        previewImage.src = dataUrl;
+
+        // Stop the webcam
+        // const mediaStream = video.srcObject;
+        // const tracks = mediaStream.getTracks();
+        // tracks[0].stop();
+
+        // Do something with the filename, like submit it along with the form data
+        console.log("Filename:", filename);
+    });
+
+
+
+});
+
+function submitCapturedImageProfile() {
+    const userID = localStorage.getItem("id");
+    const caption = document.getElementById("caption").value; // Retrieve the caption value
+
+    const formData = new FormData();
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/png");
+
+    // Generate a unique filename based on the current timestamp and a random string
+    const timestamp = new Date().getTime();
+    const randomString = Math.random().toString(36).substring(7);
+    const fileName = `image_${timestamp}_${randomString}.png`;
+
+    
+    const blob = dataURLtoBlob(dataUrl);
+
+
+    formData.append("file", blob, fileName);
+
+    formData.append("caption", caption);
+    formData.append("userID", userID);
+
+
+    axios.post('PHP/uploads.php', formData)
+        .then(function (response) {
+            console.log('Response Data:', response.data);
+            alert(response.data.message || response.data.error);
+            window.location.href = "profile.html"; 
+        })
+        .catch(function (error) {
+            console.error('Error:', error);
+            alert('An error occurred. Please try again.');
+        });
+}
+
+
+
+// Function to convert data URL to Blob
+function dataURLtoBlob(dataURL) {
+    const parts = dataURL.split(';base64,');
+    const contentType = parts[0].split(':')[1];
+    const raw = window.atob(parts[1]);
+    const rawLength = raw.length;
+    const uInt8Array = new Uint8Array(rawLength);
+
+    for (let i = 0; i < rawLength; ++i) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], {
+        type: contentType
+    });
+}
