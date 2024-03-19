@@ -92,7 +92,7 @@
             <div class="modal-body">
                <form id="updateDetailsForm" onsubmit="updateDetails()">
                   <div class="form-group" style="margin-bottom: 20px">
-                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated Firstname">
+                     <input type="text" class="form-control" id="updated-firstname" placeholder="Enter updated Firstname" value="">
                      <small id="firstnameErrorMsg" class="form-text text-danger"></small>
                   </div>
                   <div class="form-group" style="margin-bottom: 20px">
@@ -319,7 +319,7 @@
                <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
                <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
                <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
-               <p><strong>Password:</strong> ${localStorage.getItem("password")}</p>
+               
            `;
                })
                .catch(error => {
@@ -375,6 +375,37 @@
                console.error('Error updating details:', error);
             });
       }
+
+
+
+      document.addEventListener("DOMContentLoaded", function() {
+         console.log("Page loaded");
+         const userId = sessionStorage.getItem('userId');
+
+         if (userId) {
+            axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+               .then(response => {
+                  console.log('User details response:', response.data);
+                  const userData = response.data;
+
+
+
+                  // Set values from localStorage into input fields
+                  document.getElementById("updated-firstname").value = localStorage.getItem("firstname");
+                  document.getElementById("updated-middlename").value = localStorage.getItem("middlename");
+                  document.getElementById("updated-lastname").value = localStorage.getItem("lastname");
+                  document.getElementById("updated-email").value = localStorage.getItem("email");
+                  document.getElementById("updated-cpnumber").value = localStorage.getItem("cpnumber");
+                  document.getElementById("updated-username").value = localStorage.getItem("username");
+                  document.getElementById("updated-password").value = localStorage.getItem("password");
+               })
+               .catch(error => {
+                  console.error('Error fetching user details:', error);
+               });
+         } else {
+            console.error('userId not available');
+         }
+      });
    </script>
 
 </body>
