@@ -278,8 +278,14 @@ function fetchImages() {
                             
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px; background: transparent; border: none;">
-                                    <span id="likeCount-${post.id}">${post.likes || 0}</span>  &nbsp; <img src="../sync/img/like.png" alt="" style="height: 30px; width: 30px;">
+                                    <span id="likeCount-${post.id}">${post.likes || 0}</span>  &nbsp; 
+                                    <img id="likeIcon-${post.id}" src="../sync/img/${sessionStorage.getItem(`liked-${post.id}`) ? 'liked.png' : 'like.png'}" alt="" style="height: 30px; width: 30px;">
                                 </button>
+                        
+                        
+                        
+                        
+                        
                                 
                                 <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted"><img src="../sync/img/com.png" alt="" style="height: 30px; width: 30px;"></a>
                         
@@ -303,7 +309,7 @@ function fetchImages() {
 }
 
 async function heartPost(postId) {
-    console.log("gi tawag ang heart post")
+    console.log("gi tawag ang heart post");
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
         postId: postId,
@@ -315,6 +321,8 @@ async function heartPost(postId) {
     console.log("JSON DATA MO TO", JSON.stringify(jsonData));
 
     const likeCountElement = document.getElementById(`likeCount-${postId}`);
+    const likeIcon = document.getElementById(`likeIcon-${postId}`);
+    const isLiked = sessionStorage.getItem(`liked-${postId}`) === 'true';
 
     try {
         const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
@@ -324,14 +332,24 @@ async function heartPost(postId) {
         if (response.data === -5) {
             console.log('Post unliked successfully:', response);
             likeCountElement.textContent = Math.max(currentLikes - 1, 0);
+            likeIcon.src = "../sync/img/like.png";
+            sessionStorage.setItem(`liked-${postId}`, 'false');
         } else {
             console.log('Post liked successfully:', response);
             likeCountElement.textContent = currentLikes + 1;
+            likeIcon.src = "../sync/img/liked.png";
+            sessionStorage.setItem(`liked-${postId}`, 'true');
         }
     } catch (error) {
         console.error('Error interacting with post:', error);
     }
 }
+
+
+
+
+
+
 
 
 
