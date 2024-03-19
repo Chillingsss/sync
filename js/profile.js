@@ -27,9 +27,9 @@ function fetchUserDetails(userId) {
     fetch(`fetch_user.php?userId=${userId}`)
         .then(response => response.json())
         .then(user => {
-            // Update the content on userProfile.html with user details
+
             document.getElementById("userFirstname").textContent = user.firstname;
-            // Add more lines to update other elements as needed
+
         })
         .catch(error => {
             console.error('Error fetching user details:', error);
@@ -42,7 +42,7 @@ function formatTimestamp(timestamp) {
     return new Date(timestamp).toLocaleDateString('en-US', options);
 }
 
-// Function to fetch and display user posts
+
 function fetchUserPosts() {
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
@@ -511,7 +511,7 @@ function submitCapturedImageProfile() {
     const randomString = Math.random().toString(36).substring(7);
     const fileName = `image_${timestamp}_${randomString}.png`;
 
-    
+
     const blob = dataURLtoBlob(dataUrl);
 
 
@@ -525,7 +525,7 @@ function submitCapturedImageProfile() {
         .then(function (response) {
             console.log('Response Data:', response.data);
             alert(response.data.message || response.data.error);
-            window.location.href = "profile.html"; 
+            window.location.href = "profile.html";
         })
         .catch(function (error) {
             console.error('Error:', error);
