@@ -415,51 +415,89 @@ function formatTimestamp(timestamp) {
 }
 
 function fetchComments() {
-    // console.log("commented");
     const jsonData = {
         uploadId: sessionStorage.getItem("selectedPostId"),
     };
 
     const formData = new FormData();
     formData.append("json", JSON.stringify(jsonData));
-    formData.append("operation", "fetchComment")
+    formData.append("operation", "fetchComment");
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
-        .then(
-            response => {
-                console.log("response ni comment", response);
-                const commentList = document.getElementById('commentList');
-                commentList.innerHTML = '';
+        .then(response => {
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '';
 
-                response.data.map((comment) => {
+            response.data.forEach(comment => {
+                const commentContainer = document.createElement('div');
+                commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white', 'd-flex', 'flex-row', 'align-items-start');
+                commentContainer.style.borderColor = '#0F0F0F';
 
-                    const commentContainer = document.createElement('div');
-                    commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white');
-                    commentContainer.style.borderColor = '#0F0F0F';
+                const commentTextContainer = document.createElement('div');
+                commentTextContainer.classList.add('d-flex', 'flex-column', 'flex-grow-1');
 
-                    const commentFirstName = document.createElement('div');
-                    commentFirstName.classList.add('card-header', 'font-weight-bold');
-                    commentFirstName.textContent = comment.firstname;
+                const commentFirstName = document.createElement('div');
+                commentFirstName.classList.add('card-header', 'font-weight-bold');
+                commentFirstName.style.fontSize = 'px';
+                commentFirstName.textContent = comment.firstname;
 
-                    const commentItem = document.createElement('div');
-                    commentItem.classList.add('card-body', 'd-flex', 'flex-column');
-                    commentItem.textContent = comment.comment_message;
+                const commentItem = document.createElement('div');
+                commentItem.classList.add('card-body');
+                commentItem.textContent = comment.comment_message;
 
-                    commentContainer.appendChild(commentFirstName);
-                    commentContainer.appendChild(commentItem);
+                commentTextContainer.appendChild(commentFirstName);
+                commentTextContainer.appendChild(commentItem);
 
-                    commentList.appendChild(commentContainer);
-                });
+                commentContainer.appendChild(commentTextContainer);
 
-                // Show the comment modal
-                $('#commentModal').modal('show');
+                if (parseInt(comment.comment_userID) === parseInt(sessionStorage.getItem("userId"))) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('btn', 'btn-sm', 'ml-auto', 'mt-2', 'text-secondary');
+                    deleteButton.onclick = () => deleteComment(comment.comment_id);
+                    commentContainer.appendChild(deleteButton);
+                }
 
-            }
-        )
+                commentList.appendChild(commentContainer);
+            });
+
+            // Show the comment modal
+            $('#commentModal').modal('show');
+        })
         .catch(error => {
             console.error('Error fetching comments:', error);
         });
 }
+
+
+
+
+async function deleteComment(comment_id) {
+    try {
+        const jsonData = {
+            comment_id: comment_id
+        };
+
+        const formData = new FormData();
+        formData.append("operation", "deleteComment");
+        formData.append("json", JSON.stringify(jsonData));
+
+        if (confirm('Are you sure you want to delete this comment?')) {
+            const res = await axios.post('http://localhost/sync/PHP/login.php', formData);
+            console.log("RESPONSE sa delete comment NI", res);
+
+            if (res.data === 1) {
+                console.log('Comment deleted successfully:', res);
+                fetchComments();
+            } else {
+                console.error('Error comment post:', res.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error comment post:', error);
+    }
+}
+
 
 
 

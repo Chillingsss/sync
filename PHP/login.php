@@ -271,7 +271,7 @@ class Data
         include "connection.php";
         $json = json_decode($json, true);
 
-        $sql = "SELECT a.firstname, b.comment_message 
+        $sql = "SELECT b.comment_id, b.comment_userID, a.firstname, b.comment_message 
         FROM tbl_users as a 
         INNER JOIN tbl_comment as b ON b.comment_userID = a.id 
         WHERE b.comment_uploadId = :postId";
@@ -289,6 +289,45 @@ class Data
         }
 
         return $returnValue;
+    }
+
+
+    function deleteComment($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+
+        $postId = $json['comment_id'];
+
+        $sql = "DELETE FROM tbl_comment WHERE comment_id = :postId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':postId', $postId, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->rowCount() > 0 ? 1 : 0;
+    }
+
+    function editComment($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+
+        $sql = "UPDATE tbl_comment SET comment_message=:updatedComment WHERE comment_id=:comment_id";
+
+        $stmt = $conn->prepare($sql);
+
+        $stmt->bindParam(":updatedComment", $json["updatedComment"]);
+
+        $stmt->bindParam(":comment_id", $json["comment_id"]);
+        $stmt->execute();
+        if ($stmt->rowCount() > 0) {
+            return json_encode(array("status" => 1, "message" => "Comment updated successfully"));
+        } else {
+            throw new Exception("Error executing SQL statement.");
+        }
+
+        $stmt = null;
+        $conn = null;
     }
 }
 
@@ -326,6 +365,12 @@ switch ($operation) {
         break;
     case "isUserLiked":
         echo $data->isUserLiked($json);
+        break;
+    case "deleteComment":
+        echo $data->deleteComment($json);
+        break;
+    case "editComment":
+        echo $data->editComment($json);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));
