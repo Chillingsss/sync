@@ -37,29 +37,36 @@
                <a class=" nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                   <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
                </a>
-               <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
-                  <a class="dropdown-item bg-transparent" style="text-decoration: none; color:#E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;" data-toggle="modal" data-target="#userDetailsModal">
+               <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 50px;">
+                  <a class="dropdown-item bg-transparent" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;" data-toggle="modal" data-target="#userDetailsModal">
                      User Details
                   </a>
+
+                  <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; display: flex; align-items: center; justify-content: center;" onclick="logout()">
+                     <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
+                  </a>
                </div>
+
             </li>
 
             <li class="nav-item" style="margin-right: 15px; margin-top: 5px;">
                <a class="nav-link" href="profile.html" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
-                  <img src="img/profile.png" alt="Setting Icon" style="width: 100px; height: 25px;">
+                  <img src="img/profile.png" alt="Setting Icon" style="width: 30px; height: 30px;">
                </a>
             </li>
 
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">
                   <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
                </a>
-            </li>
+            </li> -->
          </ul>
       </div>
 
    </nav>
 
+
+   <!-- user details -->
    <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
          <div class="modal-content" style="background-color: #242526; border-radius:20px;">

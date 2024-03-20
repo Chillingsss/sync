@@ -37,11 +37,17 @@
                         style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                         <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
                     </a>
-                    <div class="dropdown-menu bg-dark " aria-labelledby="navbarDropdown" style="border-radius: 50px;">
+                    <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 50px;">
                         <a class="dropdown-item bg-transparent"
-                            style="text-decoration: none; color:#E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;"
+                            style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;"
                             data-toggle="modal" data-target="#userDetailsModal">
                             User Details
+                        </a>
+
+                        <a class="nav-link"
+                            style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; display: flex; align-items: center; justify-content: center;"
+                            onclick="logout()">
+                            <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
                         </a>
                     </div>
                 </li>
@@ -49,17 +55,17 @@
                 <li class="nav-item" style="margin-right: 15px; margin-top: 5px;">
                     <a class="nav-link" href="profile.html"
                         style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
-                        <img src="img/profile.png" alt="Setting Icon" style="width: 100px; height: 25px;">
+                        <img src="img/profile.png" alt="Setting Icon" style="width: 30px; height: 30px;">
                     </a>
                 </li>
 
-                <li class="nav-item">
+                <!-- <li class="nav-item">
                     <a class="nav-link"
                         style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;"
                         onclick="logout()">
                         <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
                     </a>
-                </li>
+                </li> -->
             </ul>
         </div>
     </nav>
@@ -122,6 +128,42 @@
         <div class="col-md-13 " id="prof">
         </div>
 
+    </div>
+
+
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="commentInput">Comment:</label>
+                            <textarea class="form-control bg-dark text-white" id="commentInput" rows="3"
+                                placeholder="Enter your comment"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addComment()">Add Comment</button>
+                </div>
+                <!-- Display area for fetched comments -->
+                <div class="modal-body bg-dark text-white">
+                    <h5>Comments:</h5>
+                    <div id="firstname"></div>
+                    <div id="commentList"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="js/index.js"></script>

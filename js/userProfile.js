@@ -56,19 +56,19 @@ function fetchUserPosts(userId) {
                 <div class="mb-4" style="font-size: 1.1rem; color: #E4E6EB;">${post.caption}</div>
             </div>
 
-                <!-- Comment Section -->
+               
                 <div class="d-flex align-items-center">
-                                <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px;">
-                                    <span id="likeCount-${post.id}">${post.likes || 0}</span> Likes
-                                </button>
-                                <ul id="comments-${post.postId}" class="list-unstyled mr-3"></ul>
-                                <form onsubmit="addComment(event, ${post.postId})" class="d-flex">
-                                    <input type="text" class="form-control mr-2" style="flex-grow: 1; background-color: #242526; border-radius: 20px; width: 300px;" id="comment-${post.postId}" placeholder="Add a comment" required>
-                                    <button type="submit" class="btn">
-                                        <img src="img/comment.png" alt="Sync Comment">
-                                    </button>
-                                </form>
-                            </div>
+                    <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px; background: transparent; border: none;">
+                        <span id="likeCount-${post.id}">${post.likes || 0}</span>  &nbsp; 
+                        <img id="likeIcon-${post.id}" src="../sync/img/${sessionStorage.getItem(`liked-${post.id}`) === 'true' ? 'liked.png' : 'like.png'}" alt="" style="height: 30px; width: 30px;">
+                    </button>
+
+
+                    <a href="javascript:void(0);" onclick="commentPost(${post.id})" class="text-muted"><img src="../sync/img/com.png" alt="" style="height: 30px; width: 30px;"></a>
+
+
+
+                 </div>
             </div>
         `;
 
@@ -84,7 +84,8 @@ function fetchUserPosts(userId) {
     }
 }
 
-function heartPost(postId) {
+async function heartPost(postId) {
+    console.log("gi tawag ang heart post");
     const userId = sessionStorage.getItem('userId');
     const jsonData = {
         postId: postId,
@@ -93,35 +94,179 @@ function heartPost(postId) {
     const formData = new FormData();
     formData.append("operation", "heartpost");
     formData.append("json", JSON.stringify(jsonData));
+    console.log("JSON DATA MO TO", JSON.stringify(jsonData));
 
-    // Check if the user has already liked the post
     const likeCountElement = document.getElementById(`likeCount-${postId}`);
-    const isLiked = likeCountElement && likeCountElement.dataset.liked === 'true';
+    const likeIcon = document.getElementById(`likeIcon-${postId}`);
+    // const isLiked = sessionStorage.getItem(`liked-${postId}`) === 'true';
+    isUserLiked(postId);
+
+    try {
+        const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
+        console.log("response sa heartpost", response);
+        const currentLikes = parseInt(likeCountElement.textContent);
+
+        if (response.data === -5) {
+            console.log('Post unliked successfully:', response);
+            likeCountElement.textContent = Math.max(currentLikes - 1, 0);
+            likeIcon.src = "../sync/img/like.png";
+            sessionStorage.setItem(`liked-${postId}`, 'false');
+        } else {
+            console.log('Post liked successfully:', response);
+            likeCountElement.textContent = currentLikes + 1;
+            likeIcon.src = "../sync/img/liked.png";
+            sessionStorage.setItem(`liked-${postId}`, 'true');
+        }
+
+    } catch (error) {
+        console.error('Error interacting with post:', error);
+    }
+}
+
+async function isUserLiked(postId) {
+    try {
+        const url = "http://localhost/sync/PHP/login.php";
+        const userId = sessionStorage.getItem("userId");
+        const jsonData = {
+            postId: postId,
+            userId: userId
+        }
+
+        const formData = new FormData();
+        formData.append("json", JSON.stringify(jsonData));
+        formData.append("operation", "isUserLiked");
+        const res = await axios.post(url, formData);
+        console.log("na like ba ni user? ", res.data);
+        // return res.data;
+        if (res.data === 1) {
+            sessionStorage.setItem(`liked-${postId}`, 'true');
+        } else {
+            sessionStorage.setItem(`liked-${postId}`, 'false');
+        }
+    } catch (error) {
+        alert("there was an error", error);
+    }
+}
+
+
+function fetchComments() {
+    const jsonData = {
+        uploadId: sessionStorage.getItem("selectedPostId"),
+    };
+
+    const formData = new FormData();
+    formData.append("json", JSON.stringify(jsonData));
+    formData.append("operation", "fetchComment");
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
         .then(response => {
-            if (response.data === 1) {
+            const commentList = document.getElementById('commentList');
+            commentList.innerHTML = '';
 
-                // If liked successfully, update the like count
-                const currentLikes = parseInt(likeCountElement.textContent);
+            response.data.forEach(comment => {
+                const commentContainer = document.createElement('div');
+                commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white', 'd-flex', 'flex-row', 'align-items-start');
+                commentContainer.style.borderColor = '#0F0F0F';
 
-                if (!isLiked) {
-                    console.log('Post liked successfully:', response);
-                    likeCountElement.textContent = currentLikes + 1;
-                    likeCountElement.dataset.liked = 'true';
-                } else {
+                const commentTextContainer = document.createElement('div');
+                commentTextContainer.classList.add('d-flex', 'flex-column', 'flex-grow-1');
 
-                    console.log('Post unliked successfully:', response);
-                    likeCountElement.textContent = Math.max(currentLikes - 1, 0); // Ensure it's not negative
-                    likeCountElement.dataset.liked = 'false';
+                const commentFirstName = document.createElement('div');
+                commentFirstName.classList.add('card-header', 'font-weight-bold');
+                commentFirstName.style.fontSize = 'px';
+                commentFirstName.textContent = comment.firstname;
+
+                const commentItem = document.createElement('div');
+                commentItem.classList.add('card-body');
+                commentItem.textContent = comment.comment_message;
+
+                commentTextContainer.appendChild(commentFirstName);
+                commentTextContainer.appendChild(commentItem);
+
+                commentContainer.appendChild(commentTextContainer);
+
+                if (parseInt(comment.comment_userID) === parseInt(sessionStorage.getItem("userId"))) {
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.classList.add('btn', 'btn-sm', 'ml-auto', 'mt-2', 'text-secondary');
+                    deleteButton.onclick = () => deleteComment(comment.comment_id);
+                    commentContainer.appendChild(deleteButton);
                 }
-            } else {
-                console.error('Error interacting with post:', response);
-            }
+
+                commentList.appendChild(commentContainer);
+            });
+
+            // Show the comment modal
+            $('#commentModal').modal('show');
         })
         .catch(error => {
-            console.error('Error interacting with post:', error);
+            console.error('Error fetching comments:', error);
         });
+}
+
+
+
+
+async function deleteComment(comment_id) {
+    try {
+        const jsonData = {
+            comment_id: comment_id
+        };
+
+        const formData = new FormData();
+        formData.append("operation", "deleteComment");
+        formData.append("json", JSON.stringify(jsonData));
+
+        if (confirm('Are you sure you want to delete this comment?')) {
+            const res = await axios.post('http://localhost/sync/PHP/login.php', formData);
+            console.log("RESPONSE sa delete comment NI", res);
+
+            if (res.data === 1) {
+                console.log('Comment deleted successfully:', res);
+                fetchComments();
+            } else {
+                console.error('Error comment post:', res.message);
+            }
+        }
+    } catch (error) {
+        console.error('Error comment post:', error);
+    }
+}
+
+
+
+
+async function addComment() {
+    const commentInput = document.getElementById(`commentInput`).value;
+    if (commentInput == null || commentInput == "") {
+        console.log(commentInput);
+    } else {
+        try {
+            const postId = sessionStorage.getItem("selectedPostId");
+            const userId = sessionStorage.getItem('userId');
+            const jsonData = {
+                uploadId: postId,
+                userId: userId,
+                comment_message: commentInput,
+            };
+
+            const formData = new FormData();
+            formData.append("json", JSON.stringify(jsonData));
+            formData.append("operation", "commentPost");
+
+            const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
+            console.log('Comment added successfully:', response.data);
+            fetchComments();
+        } catch (error) {
+            console.error('Error adding comment:', error);
+        }
+    }
+}
+
+function commentPost(postId) {
+    $('#commentModal').modal('show');
+    sessionStorage.setItem("selectedPostId", postId);
+    fetchComments();
 }
 
 
