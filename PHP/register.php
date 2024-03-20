@@ -35,10 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $response["status"] = "error";
         $response["message"] = "Error: " . $sql . "<br>" . $conn->error;
-        $response["query"] = $sql; // Add the actual query to the response for debugging
+        $response["query"] = $sql;
     }
 }
 
-echo json_encode($response); // Send JSON response
+echo json_encode($response);
 
 $conn->close();

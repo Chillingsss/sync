@@ -7,6 +7,18 @@ header("Access-Control-Allow-Headers: Authorization, Content-Type");
 class Data
 {
 
+    function isUserLiked($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+        $sql = "SELECT * FROM tbl_points WHERE point_postId = :postId AND point_userId = :userId";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":postId", $json["postId"]);
+        $stmt->bindParam(":userId", $json["userId"]);
+        $stmt->execute();
+        return $stmt->rowCount() > 0 ? 1 : 0;
+    }
+
     function loginUser($json)
     {
         include "connection.php";
@@ -311,6 +323,9 @@ switch ($operation) {
         break;
     case "fetchComment":
         echo $data->fetchComment($json);
+        break;
+    case "isUserLiked":
+        echo $data->isUserLiked($json);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));

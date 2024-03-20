@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Get the user ID from the query parameters
+
     const urlParams = new URLSearchParams(window.location.search);
     const userId = urlParams.get('userId');
 
-    // Fetch user details
     fetchUserDetails(userId);
 
-    // Fetch and display user posts
+
     fetchUserPosts(userId);
 });
 
@@ -19,9 +18,9 @@ function fetchUserDetails(userId) {
     fetch(`fetch_user.php?userId=${userId}`)
         .then(response => response.json())
         .then(user => {
-            // Update the content on userProfile.html with user details
+
             document.getElementById("userFirstname").textContent = user.firstname;
-            // Add more lines to update other elements as needed
+
         })
         .catch(error => {
             console.error('Error fetching user details:', error);

@@ -8,7 +8,7 @@ class Update
 
     public function __construct()
     {
-        // Initialize database connection in the constructor
+
         $servername = "127.0.0.1";
         $username = "root";
         $password = "pelino";
@@ -23,7 +23,7 @@ class Update
 
     public function update($formData)
     {
-        // Extract data from the FormData object
+
         $updatedFirstname = $formData["updated-firstname"];
         $updatedMiddlename = $formData["updated-middlename"];
         $updatedLastname = $formData["updated-lastname"];
@@ -32,20 +32,19 @@ class Update
         $updatedUsername = $formData["updated-username"];
         $updatedPassword = $formData["updated-password"];
 
-        // Check if the user is logged in
+
         if (isset($_SESSION["userDetails"]["id"])) {
             $userId = $_SESSION["userDetails"]["id"];
 
-            // Use prepared statement to update user details
+
             $stmt = $this->conn->prepare("UPDATE tbl_users SET firstname=?, middlename=?, lastname=?, email=?, cpnumber=?, username=?, password=? WHERE id=?");
             $stmt->bind_param("ssssisss", $updatedFirstname, $updatedMiddlename, $updatedLastname, $updatedEmail, $updatedCpnumber, $updatedUsername, $updatedPassword, $userId);
 
-            // Check for errors in binding parameters
+
             if ($stmt->error) {
                 return json_encode(array("status" => -1, "message" => "Error binding parameters: " . $stmt->error));
             }
 
-            // Execute the statement
             if ($stmt->execute()) {
                 return json_encode(array("status" => 1, "message" => "Details updated successfully"));
             } else {

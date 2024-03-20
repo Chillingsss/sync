@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function submitCapturedImage() {
     const userID = localStorage.getItem("id");
-    const caption = document.getElementById("caption").value; // Retrieve the caption value
+    const caption = document.getElementById("caption").value;
 
     const formData = new FormData();
 
@@ -140,27 +140,23 @@ function submitCapturedImage() {
     canvas.getContext("2d").drawImage(video, 0, 0, canvas.width, canvas.height);
     const dataUrl = canvas.toDataURL("image/png");
 
-    // Generate a unique filename based on the current timestamp and a random string
+
     const timestamp = new Date().getTime();
     const randomString = Math.random().toString(36).substring(7);
     const fileName = `image_${timestamp}_${randomString}.png`;
 
-    // Create a Blob from the data URL
     const blob = dataURLtoBlob(dataUrl);
 
-    // Append the Blob to the FormData object
     formData.append("file", blob, fileName);
 
-    // Append the caption and userID
     formData.append("caption", caption);
     formData.append("userID", userID);
 
-    // Send the FormData object to the server using axios
     axios.post('PHP/uploads.php', formData)
         .then(function (response) {
             console.log('Response Data:', response.data);
             alert(response.data.message || response.data.error);
-            window.location.href = "index.php"; // Redirect to index.php after successful upload
+            window.location.href = "index.php";
         })
         .catch(function (error) {
             console.error('Error:', error);
@@ -230,7 +226,7 @@ function submitForm() {
     })
         .then(function (response) {
             console.log('Response Data:', response.data);
-            // Handle success
+
             alert(response.data.message || response.data.error);
             window.location.href = "index.php";
         })
@@ -257,6 +253,7 @@ function fetchImages() {
             imageContainer.innerHTML = '';
 
             data.forEach(post => {
+                isUserLiked(post.id);
                 const userId = post.userId;
                 fetch(`fetch_user.php?userId=${post.userId}`)
                     .then(response => response.json())
@@ -279,10 +276,10 @@ function fetchImages() {
                             <div class="d-flex align-items-center">
                                 <button class="btn btn-info mr-2 ml-4" onclick="heartPost(${post.id})" style="border-radius: 30px; padding: 10px; background: transparent; border: none;">
                                     <span id="likeCount-${post.id}">${post.likes || 0}</span>  &nbsp; 
-                                    <img id="likeIcon-${post.id}" src="../sync/img/${sessionStorage.getItem(`liked-${post.id}`) ? 'liked.png' : 'like.png'}" alt="" style="height: 30px; width: 30px;">
+                                    <img id="likeIcon-${post.id}" src="../sync/img/${sessionStorage.getItem(`liked-${post.id}`) === 'true' ? 'liked.png' : 'like.png'}" alt="" style="height: 30px; width: 30px;">
                                 </button>
                         
-                        
+                            
                         
                         
                         
@@ -294,10 +291,9 @@ function fetchImages() {
                         </div>
                     `;
 
-
+                        // sessionStorage.getItem(`liked-${post.id}`)
                         imageContainer.innerHTML += cardHtml;
 
-                        // Fetch and display comments for each post
                         fetchComments(post.postId);
 
                     })
@@ -322,7 +318,8 @@ async function heartPost(postId) {
 
     const likeCountElement = document.getElementById(`likeCount-${postId}`);
     const likeIcon = document.getElementById(`likeIcon-${postId}`);
-    const isLiked = sessionStorage.getItem(`liked-${postId}`) === 'true';
+    // const isLiked = sessionStorage.getItem(`liked-${postId}`) === 'true';
+    isUserLiked(postId);
 
     try {
         const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
@@ -340,11 +337,36 @@ async function heartPost(postId) {
             likeIcon.src = "../sync/img/liked.png";
             sessionStorage.setItem(`liked-${postId}`, 'true');
         }
+
     } catch (error) {
         console.error('Error interacting with post:', error);
     }
 }
 
+async function isUserLiked(postId) {
+    try {
+        const url = "http://localhost/sync/PHP/login.php";
+        const userId = sessionStorage.getItem("userId");
+        const jsonData = {
+            postId: postId,
+            userId: userId
+        }
+
+        const formData = new FormData();
+        formData.append("json", JSON.stringify(jsonData));
+        formData.append("operation", "isUserLiked");
+        const res = await axios.post(url, formData);
+        console.log("na like ba ni user? ", res.data);
+        // return res.data;
+        if (res.data === 1) {
+            sessionStorage.setItem(`liked-${postId}`, 'true');
+        } else {
+            sessionStorage.setItem(`liked-${postId}`, 'false');
+        }
+    } catch (error) {
+        alert("there was an error", error);
+    }
+}
 
 
 
@@ -563,12 +585,14 @@ function logout() {
     console.log("Logout na siya");
     axios.post('PHP/logout.php')
         .then(() => {
-            sessionStorage.removeItem("selectedPostId");
-            sessionStorage.removeItem("userId");
-            // Clear local storage
+            // sessionStorage.removeItem("selectedPostId");
+            sessionStorage.clear();
+            sessionStorage.removeItem('liked - ${ postId }');
+
+
             localStorage.clear();
 
-            // Redirect to login page
+
             window.location.href = "login.html";
         })
         .catch(error => {
@@ -603,8 +627,8 @@ function fetchUserDetails() {
 fetchUserDetails();
 
 function openUpdateDetailsModal() {
-    $('#userDetailsModal').modal('hide'); // Hide the user details modal
-    $('#updateDetailsModal').modal('show'); // Show the update details modal
+    $('#userDetailsModal').modal('hide');
+    $('#updateDetailsModal').modal('show');
 }
 
 

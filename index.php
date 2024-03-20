@@ -163,8 +163,7 @@
                            <!-- Display selected image -->
                            <label for="file" style="cursor: pointer;">
                               <span style="color: #E4E6EB;">Choose File </span>
-                              <img id="previewImage" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; border-radius: 30px; display: none;" />
-                              <h6 id="noImageText" style="color: #E4E6EB;">No image selected</h6>
+                              <img id="previewImage" src="#" alt="Selected Image" style="max-width: 100%; max-height: 200px; border-radius:30px" />
                            </label>
 
                         </div>
@@ -292,8 +291,8 @@
       fetchUserDetails();
 
       function openUpdateDetailsModal() {
-         $('#userDetailsModal').modal('hide'); // Hide the user details modal
-         $('#updateDetailsModal').modal('show'); // Show the update details modal
+         $('#userDetailsModal').modal('hide');
+         $('#updateDetailsModal').modal('show');
       }
 
 
@@ -390,7 +389,7 @@
 
 
 
-                  // Set values from localStorage into input fields
+
                   document.getElementById("updated-firstname").value = localStorage.getItem("firstname");
                   document.getElementById("updated-middlename").value = localStorage.getItem("middlename");
                   document.getElementById("updated-lastname").value = localStorage.getItem("lastname");

@@ -94,7 +94,7 @@ function checkPasswordMatch() {
     if (password !== retypePassword) {
         errorElement.textContent = "Passwords do not match";
     } else {
-        errorElement.textContent = ""; // Clear the error message if passwords match
+        errorElement.textContent = ""; 
     }
 }
 
@@ -104,7 +104,6 @@ function registerUser() {
         const password = document.getElementById("reg-password").value;
         const retypePassword = document.getElementById("reg-retype-password").value;
 
-        // Check if the passwords match
         if (password !== retypePassword) {
             alert("Passwords do not match");
             return;
@@ -169,7 +168,7 @@ function loginUser() {
         const usernameErrorMsg = document.getElementById("usernameErrorMsg");
         const passwordErrorMsg = document.getElementById("passwordErrorMsg");
 
-        // Reset previous error messages and border colors
+   
         usernameErrorMsg.textContent = '';
         passwordErrorMsg.textContent = '';
         usernameInput.style.borderColor = '';
