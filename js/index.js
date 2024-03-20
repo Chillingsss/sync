@@ -294,7 +294,7 @@ function fetchImages() {
                         // sessionStorage.getItem(`liked-${post.id}`)
                         imageContainer.innerHTML += cardHtml;
 
-                        fetchComments(post.postId);
+                        // fetchComments(post.postId);
 
                     })
                     .catch(error => {
@@ -415,6 +415,7 @@ function formatTimestamp(timestamp) {
 }
 
 function fetchComments() {
+    // console.log("commented");
     const jsonData = {
         uploadId: sessionStorage.getItem("selectedPostId"),
     };
@@ -424,34 +425,37 @@ function fetchComments() {
     formData.append("operation", "fetchComment")
 
     axios.post(`http://localhost/sync/PHP/login.php`, formData)
-        .then(response => {
+        .then(
+            response => {
+                console.log("response ni comment", response);
+                const commentList = document.getElementById('commentList');
+                commentList.innerHTML = '';
 
-            const commentList = document.getElementById('commentList');
-            commentList.innerHTML = '';
+                response.data.map((comment) => {
 
-            response.data.forEach(comment => {
+                    const commentContainer = document.createElement('div');
+                    commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white');
+                    commentContainer.style.borderColor = '#0F0F0F';
 
-                const commentContainer = document.createElement('div');
-                commentContainer.classList.add('card', 'mb-3', 'h-20', 'bg-dark', 'text-white');
-                commentContainer.style.borderColor = '#0F0F0F';
+                    const commentFirstName = document.createElement('div');
+                    commentFirstName.classList.add('card-header', 'font-weight-bold');
+                    commentFirstName.textContent = comment.firstname;
 
-                const commentFirstName = document.createElement('div');
-                commentFirstName.classList.add('card-header', 'font-weight-bold');
-                commentFirstName.textContent = comment.firstname;
+                    const commentItem = document.createElement('div');
+                    commentItem.classList.add('card-body', 'd-flex', 'flex-column');
+                    commentItem.textContent = comment.comment_message;
 
-                const commentItem = document.createElement('div');
-                commentItem.classList.add('card-body', 'd-flex', 'flex-column');
-                commentItem.textContent = comment.comment_message;
+                    commentContainer.appendChild(commentFirstName);
+                    commentContainer.appendChild(commentItem);
 
-                commentContainer.appendChild(commentFirstName);
-                commentContainer.appendChild(commentItem);
+                    commentList.appendChild(commentContainer);
+                });
 
-                commentList.appendChild(commentContainer);
-            });
+                // Show the comment modal
+                $('#commentModal').modal('show');
 
-            // Show the comment modal
-            $('#commentModal').modal('show');
-        })
+            }
+        )
         .catch(error => {
             console.error('Error fetching comments:', error);
         });
@@ -459,34 +463,34 @@ function fetchComments() {
 
 
 
-function addComment() {
+async function addComment() {
     const commentInput = document.getElementById(`commentInput`).value;
-    // const comment = commentInput.value;
-    // console.log("postIDDDD", postId);
-    const postId = sessionStorage.getItem("selectedPostId");
-    const userId = sessionStorage.getItem('userId');
-    const jsonData = {
-        uploadId: postId,
-        userId: userId,
-        comment_message: commentInput,
-    };
+    if (commentInput == null || commentInput == "") {
+        console.log(commentInput);
+    } else {
+        try {
+            const postId = sessionStorage.getItem("selectedPostId");
+            const userId = sessionStorage.getItem('userId');
+            const jsonData = {
+                uploadId: postId,
+                userId: userId,
+                comment_message: commentInput,
+            };
 
-    console.log("JsonData", JSON.stringify(jsonData));
+            const formData = new FormData();
+            formData.append("json", JSON.stringify(jsonData));
+            formData.append("operation", "commentPost");
 
-    const formData = new FormData();
-    formData.append("json", JSON.stringify(jsonData));
-    formData.append("operation", "commentPost")
-
-    axios.post(`http://localhost/sync/PHP/login.php`, formData)
-        .then(response => {
-            fetchComments();
+            const response = await axios.post(`http://localhost/sync/PHP/login.php`, formData);
             console.log('Comment added successfully:', response.data);
-
-        })
-        .catch(error => {
+            fetchComments();
+        } catch (error) {
             console.error('Error adding comment:', error);
-        });
+        }
+    }
 }
+
+
 
 
 function commentPost(postId) {

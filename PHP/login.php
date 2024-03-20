@@ -283,7 +283,7 @@ class Data
 
         $returnValue = 0;
 
-        if ($stmt->rowCount() > 1) {
+        if ($stmt->rowCount() > 0) {
             $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $returnValue = json_encode($rs);
         }
