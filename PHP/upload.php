@@ -34,7 +34,7 @@ if (!empty($_FILES['file']['tmp_name']) && is_uploaded_file($_FILES['file']['tmp
 
     if (in_array($fileActualExt, $allowed)) {
         if ($fileError === 0) {
-            if ($fileSize < 25000000) {
+            if ($fileSize < 100000000) {
                 $fileNameNew = uniqid('', true) . "." . $fileActualExt;
                 // $fileDestination = 'uploads/' . $fileNameNew;
                 $fileDestination = '/var/www/html/sync/uploads/' . $fileNameNew;

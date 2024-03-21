@@ -219,6 +219,8 @@
 
       </div>
 
+
+      <!-- mugawas ang tanan post -->
       <div class="col-md-13 " id="imageContainer"></div>
 
    </div>

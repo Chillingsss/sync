@@ -210,6 +210,8 @@ fetch(`fetch_user.php?userId=${userId}`)
         console.error('Error fetching user details:', error);
     });
 
+
+// pag submit ug upload
 function submitForm() {
     const form = document.getElementById('uploadForm');
     const userID = localStorage.getItem("id");
@@ -242,7 +244,7 @@ function submitForm() {
 
 
 
-
+// makita tanan gi upload
 function fetchImages() {
 
     sessionStorage.removeItem("selectedPostId");
