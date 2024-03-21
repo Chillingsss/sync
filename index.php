@@ -33,13 +33,14 @@
 
       <div class="collapse navbar-collapse" id="navbarNav">
          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown " style="margin-right: 15px; margin-top: 5px;">
+
+            <li class="nav-item dropdown " style="margin-right: 20px; margin-top: 5px;">
                <a class=" nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                   <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
                </a>
-               <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 50px;">
+               <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 30px; ">
                   <a class="dropdown-item bg-transparent" style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;" data-toggle="modal" data-target="#userDetailsModal">
-                     User Details
+                     Account
                   </a>
 
                   <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; display: flex; align-items: center; justify-content: center;" onclick="logout()">
@@ -49,7 +50,7 @@
 
             </li>
 
-            <li class="nav-item" style="margin-right: 15px; margin-top: 5px;">
+            <li class="nav-item" style="margin-right: 35px; margin-top: 5px;">
                <a class="nav-link" href="profile.html" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
                   <img src="img/profile.png" alt="Setting Icon" style="width: 30px; height: 30px;">
                </a>

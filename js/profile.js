@@ -62,7 +62,7 @@ function fetchUserPosts() {
                 posts.map(post => {
                     const cardHtml = `
                 <div class="card mt-4 mx-auto d-block custom-card" style="border-radius: 20px; max-width: 500px; background-color: #272727;">
-                    <div class="text-start ml-3" style="font-weight:; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
+                    <div class="text-start ml-3" style="font-weight: bold; font-size: 1.2rem; color: #E4E6EB;">${post.firstname}</div>
             
                         ${post.filename ? `<img src="uploads/${post.filename}" alt="Uploaded Image" class="card-img-top custom-img img-fluid">` : ''}
                         

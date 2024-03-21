@@ -36,17 +36,18 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item dropdown " style="margin-right: 15px; margin-top: 5px;">
+
+                <li class="nav-item dropdown " style="margin-right: 20px; margin-top: 5px;">
                     <a class=" nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
                         <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
                     </a>
-                    <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 50px;">
+                    <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 30px; ">
                         <a class="dropdown-item bg-transparent"
                             style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;"
                             data-toggle="modal" data-target="#userDetailsModal">
-                            User Details
+                            Account
                         </a>
 
                         <a class="nav-link"
@@ -55,9 +56,10 @@
                             <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
                         </a>
                     </div>
+
                 </li>
 
-                <li class="nav-item" style="margin-right: 15px; margin-top: 5px;">
+                <li class="nav-item" style="margin-right: 35px; margin-top: 5px;">
                     <a class="nav-link" href="profile.html"
                         style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
                         <img src="img/profile.png" alt="Setting Icon" style="width: 30px; height: 30px;">
@@ -75,6 +77,91 @@
         </div>
     </nav>
 
+
+
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #242526; border-radius:20px;">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white" id="userDetailsModalLabel">User Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-white" id="userDetailsContent">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#updateDetailsModal">Update Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateDetailsModal" tabindex="-1" role="dialog"
+        aria-labelledby="updateDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #FFF; border-radius:20px;">
+                <div class="modal-header">
+                    <h5 class="modal-title bg-white" id="updateDetailsModalLabel">Update User Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateDetailsForm" onsubmit="updateDetails()">
+                        <div class="form-group" style="margin-bottom: 20px">
+                            <input type="text" class="form-control" id="updated-firstname"
+                                placeholder="Enter updated Firstname" value="">
+                            <small id="firstnameErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="text" class="form-control" id="updated-middlename"
+                                placeholder="Enter updated middle name">
+                            <small id="middlenameErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+                            <input type="text" class="form-control" id="updated-lastname"
+                                placeholder="Enter updated last name">
+                            <small id="lastnameErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="email" class="form-control" id="updated-email"
+                                placeholder="Enter updated email">
+                            <small id="emailErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="tel" class="form-control" id="updated-cpnumber"
+                                placeholder="Enter updated contact number">
+                            <small id="contactErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="text" class="form-control" id="updated-username"
+                                placeholder="Enter updated username">
+                            <small id="userErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="password" class="form-control" id="updated-password"
+                                placeholder="Enter updated password">
+                            <small id="passErrorMsg" class="form-text text-danger"></small>
+                        </div>
+
+                        <div class="d-flex justify-content-end align-items-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -286,9 +373,12 @@
         fetchUserDetails();
 
         function openUpdateDetailsModal() {
-            $('#userDetailsModal').modal('hide'); // Hide the user details modal
-            $('#updateDetailsModal').modal('show'); // Show the update details modal
+            $('#userDetailsModal').modal('hide');
+            $('#updateDetailsModal').modal('show');
         }
+
+
+
 
 
         document.addEventListener("DOMContentLoaded", function () {
@@ -304,14 +394,14 @@
                         document.getElementById("userFirstname").textContent = userData.firstname;
 
                         document.getElementById("userDetailsContent").innerHTML = `
-                 <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
-                 <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
-                 <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
-                 <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
-                 <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
-                 <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
-                 <p><strong>Password:</strong> ${localStorage.getItem("password")}</p>
-             `;
+         <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
+         <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
+         <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
+         <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
+         <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
+         <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
+         
+     `;
                     })
                     .catch(error => {
                         console.error('Error fetching user details:', error);
@@ -320,7 +410,6 @@
                 console.error('userId not available');
             }
         });
-
 
         function openUpdateDetailsForm() {
             document.getElementById('update-details-form-container').style.display = 'block';
@@ -358,11 +447,46 @@
             })
                 .then(function (response) {
                     console.log(response.data);
+
+                    window.location.reload();
+
+
                 })
                 .catch(function (error) {
                     console.error('Error updating details:', error);
                 });
         }
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Page loaded");
+            const userId = sessionStorage.getItem('userId');
+
+            if (userId) {
+                axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+                    .then(response => {
+                        console.log('User details response:', response.data);
+                        const userData = response.data;
+
+
+
+
+                        document.getElementById("updated-firstname").value = localStorage.getItem("firstname");
+                        document.getElementById("updated-middlename").value = localStorage.getItem("middlename");
+                        document.getElementById("updated-lastname").value = localStorage.getItem("lastname");
+                        document.getElementById("updated-email").value = localStorage.getItem("email");
+                        document.getElementById("updated-cpnumber").value = localStorage.getItem("cpnumber");
+                        document.getElementById("updated-username").value = localStorage.getItem("username");
+                        document.getElementById("updated-password").value = localStorage.getItem("password");
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user details:', error);
+                    });
+            } else {
+                console.error('userId not available');
+            }
+        });
 
         document.addEventListener("DOMContentLoaded", () => {
             const btnWebcam = document.getElementById("webcamButton");
