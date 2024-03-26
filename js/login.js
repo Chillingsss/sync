@@ -94,13 +94,12 @@ function checkPasswordMatch() {
     if (password !== retypePassword) {
         errorElement.textContent = "Passwords do not match";
     } else {
-        errorElement.textContent = ""; 
+        errorElement.textContent = "";
     }
 }
 
 function registerUser() {
     try {
-
         const password = document.getElementById("reg-password").value;
         const retypePassword = document.getElementById("reg-retype-password").value;
 
@@ -109,19 +108,42 @@ function registerUser() {
             return;
         }
 
-        const registrationForm = document.getElementById("registration-form-inner");
-        const formData = new FormData(registrationForm);
+        const jsonData = {
+            firstname: document.getElementById("reg-firstname").value,
+            middlename: document.getElementById("reg-middlename").value,
+            lastname: document.getElementById("reg-lastname").value,
+            email: document.getElementById("reg-email").value,
+            cpnumber: document.getElementById("reg-cpnumber").value,
+            username: document.getElementById("reg-username").value,
+            password: document.getElementById("reg-password").value
+        };
 
-        axios.post("http://localhost/sync/PHP/register.php", formData)
+
+        const registrationForm = new FormData();
+        registrationForm.append("operation", "signup");
+        registrationForm.append("json", JSON.stringify(jsonData));
+
+
+
+
+        axios.post("http://localhost/sync/PHP/login.php", registrationForm, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
             .then((response) => {
                 console.log(response);
-                const responseData = response.data || {};
 
-                if (responseData.status === "success") {
-                    alert("Registration failed!");
-                } else {
+
+                if (response.data === 1) {
                     alert("Registration successful!");
                     window.location.href = "login.html";
+                } else if (response.data === -1) {
+                    alert("Username already exists. Please choose a different one.");
+                } else if (response.data === -2) {
+                    alert("Email already exists. Please use a different email.");
+                } else {
+                    alert("Registration failed!");
                 }
             })
             .catch((error) => {
@@ -131,6 +153,8 @@ function registerUser() {
         console.error("Registration error: ", error);
     }
 }
+
+
 
 
 
@@ -168,7 +192,7 @@ function loginUser() {
         const usernameErrorMsg = document.getElementById("usernameErrorMsg");
         const passwordErrorMsg = document.getElementById("passwordErrorMsg");
 
-   
+
         usernameErrorMsg.textContent = '';
         passwordErrorMsg.textContent = '';
         usernameInput.style.borderColor = '';

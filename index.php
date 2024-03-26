@@ -16,7 +16,7 @@
 
 
 </head>
-<!-- #E5E4E2; -->
+<!-- #E5E4E2; -->   
 
 <body class="mt-5" id="body" style="background-color: #0F0F0F">
 
@@ -55,6 +55,13 @@
                   <img src="img/profile.png" alt="Setting Icon" style="width: 30px; height: 30px;">
                </a>
             </li>
+
+            <li class="nav-item" style="margin-right: 35px; margin-top: 5px;">
+               <a class="nav-link" href="chat.html" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
+                  <img src="img/comment.png" alt="Setting Icon" style="width: 30px; height: 30px;">
+               </a>
+            </li>
+
 
             <!-- <li class="nav-item">
                <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">
@@ -222,6 +229,9 @@
 
       <!-- mugawas ang tanan post -->
       <div class="col-md-13 " id="imageContainer"></div>
+
+      <div class="col-md-20 " id="usersContainer"></div>
+
 
    </div>
 

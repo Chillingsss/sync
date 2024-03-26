@@ -78,6 +78,32 @@ class Data
     }
 
 
+    function signup($json)
+    {
+        // {"username":"joe1","email":"joe1@gmailcom","password":"joejoejoe"}
+        include "connection.php";
+        $data = json_decode($json, true);
+        if (recordExists($data["username"], "tbl_users", "username")) {
+            return -1;
+        } else if (recordExists($data["email"], "tbl_users", "email")) {
+            return -2;
+        }
+
+        $sql = "INSERT INTO tbl_users(firstname, middlename, lastname, email, cpnumber, username, password) 
+        VALUES(:firstname, :middlename, :lastname, :email, :cpnumber, :username, :password)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":firstname", $data["firstname"]);
+        $stmt->bindParam(":middlename", $data["middlename"]);
+        $stmt->bindParam(":lastname", $data["lastname"]);
+        $stmt->bindParam(":email", $data["email"]);
+        $stmt->bindParam(":cpnumber", $data["cpnumber"]);
+        $stmt->bindParam(":username", $data["username"]);
+        $stmt->bindParam(":password", $data["password"]);
+
+        $stmt->execute();
+        return $stmt->rowCount() > 0 ? 1 : 0;
+    }
+
 
 
 
@@ -329,6 +355,39 @@ class Data
         $stmt = null;
         $conn = null;
     }
+
+    function chat($json)
+    {
+        include "connection.php";
+        $json = json_decode($json, true);
+
+        $userId = $json["userId"];
+        $chat_message = $json["chat_message"];
+        $usersID = $json["usersID"];
+
+
+        $sql = "INSERT INTO tbl_chat (chat_userID, chat_message, chat_usersID, chat_date_created)
+            VALUES (:userId, :chat_message, :usersID, NOW())";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(":chat_message", $chat_message);
+        $stmt->bindParam(":userId", $userId);
+        $stmt->bindParam(":usersID", $usersID);
+        $stmt->execute();
+
+        return $stmt->rowCount() > 0 ? 1 : 0;
+    }
+}
+
+function recordExists($value, $table, $column)
+{
+    include "connection.php";
+    $sql = "SELECT COUNT(*) FROM $table WHERE $column = :value";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindParam(":value", $value);
+    $stmt->execute();
+    $count = $stmt->fetchColumn();
+    return $count > 0;
 }
 
 $operation = isset($_POST["operation"]) ? $_POST["operation"] : "Invalid";
@@ -338,6 +397,9 @@ $data = new Data();
 switch ($operation) {
     case "loginUser":
         echo $data->loginUser($json);
+        break;
+    case "signup":
+        echo $data->signup($json);
         break;
     case "heartpost":
         echo $data->heartpost($json);
@@ -371,6 +433,9 @@ switch ($operation) {
         break;
     case "editComment":
         echo $data->editComment($json);
+        break;
+    case "chat":
+        echo $data->chat($json);
         break;
     default:
         echo json_encode(array("status" => -1, "message" => "Invalid operation."));

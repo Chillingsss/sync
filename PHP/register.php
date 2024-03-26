@@ -1,13 +1,13 @@
 <?php
 $servername = "127.0.0.1";
 $username = "root";
-$password = "pelino"; // If you haven't set a password, leave it empty
+$password = "pelino";
 $database = "db_socialmedia";
 
-
+// Create connection
 $conn = new mysqli($servername, $username, $password, $database);
 
-
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
@@ -24,18 +24,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["reg-password"];
     $retypePassword = $_POST['reg-retype-password'];
 
-    $sql = "INSERT INTO tbl_users (firstname, middlename, lastname, email, cpnumber, username, password)
-            VALUES ('$firstname', '$middlename', '$lastname', '$email', '$cpnumber', '$username', '$password')";
+    // Check if email or username already exists
+    $checkQuery = "SELECT * FROM tbl_users WHERE email='$email' OR username='$username'";
+    $checkResult = $conn->query($checkQuery);
 
-    $result = $conn->query($sql);
-
-    if ($result === TRUE) {
-        $response["status"] = "success";
-        $response["message"] = "New record created successfully";
-    } else {
+    if ($checkResult->num_rows > 0) {
         $response["status"] = "error";
-        $response["message"] = "Error: " . $sql . "<br>" . $conn->error;
-        $response["query"] = $sql;
+        $response["message"] = "Email or username already exists.";
+    } else {
+        // Insert new record if email and username are unique
+        $sql = "INSERT INTO tbl_users (firstname, middlename, lastname, email, cpnumber, username, password)
+                VALUES ('$firstname', '$middlename', '$lastname', '$email', '$cpnumber', '$username', '$password')";
+
+        if ($conn->query($sql) === TRUE) {
+            $response["status"] = "success";
+            $response["message"] = "New record created successfully";
+        } else {
+            $response["status"] = "error";
+            $response["message"] = "Error: " . $sql . "<br>" . $conn->error;
+            $response["query"] = $sql;
+        }
     }
 }
 

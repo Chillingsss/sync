@@ -544,6 +544,8 @@ function commentPost(postId) {
 
 document.addEventListener('DOMContentLoaded', fetchImages);
 
+
+
 document.getElementById("firstname").innerHTML = localStorage.getItem("firstname");
 document.getElementById("middlename").innerHTML = localStorage.getItem("middlename");
 document.getElementById("lastname").innerHTML = localStorage.getItem("lastname");
@@ -754,3 +756,6 @@ function updateDetails() {
             console.error('Error updating details:', error);
         });
 }
+
+
+

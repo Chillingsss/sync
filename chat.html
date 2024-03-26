@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+</head>
+
+<body class="mt-5" id="body" style="background-color: #0F0F0F">
+
+    <nav class="navbar navbar-expand-lg fixed-top" id="navbar" style="background-color:#242526;">
+        <a class="navbar-brand" href="index.php" style="text-decoration: none; ">
+            <img src="img/sync.png" alt="Sync Logo" style="height: 50px; width: 100px;">
+        </a>
+
+        <span id="userFirstname" style="margin-left: 10px; color: #E4E6EB;"></span>
+
+        <button class="navbar-toggler " type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <img src="img/menu.png" alt="Toggle Navigation" style="width: 40px; height: 40px;">
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item dropdown " style="margin-right: 20px; margin-top: 5px;">
+                    <a class=" nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor:pointer;">
+                        <img src="img/settings.png" alt="Setting Icon" style="width: 20px; height: 20px;">
+                    </a>
+                    <div class="dropdown-menu bg-dark" aria-labelledby="navbarDropdown" style="border-radius: 30px; ">
+                        <a class="dropdown-item bg-transparent"
+                            style="text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;"
+                            data-toggle="modal" data-target="#userDetailsModal">
+                            Account
+                        </a>
+
+                        <a class="nav-link"
+                            style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold; display: flex; align-items: center; justify-content: center;"
+                            onclick="logout()">
+                            <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
+                        </a>
+                    </div>
+
+                </li>
+
+                <li class="nav-item" style="margin-right: 35px; margin-top: 5px;">
+                    <a class="nav-link" href="profile.html"
+                        style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;">
+                        <img src="img/profile.png" alt="Setting Icon" style="width: 30px; height: 30px;">
+                    </a>
+                </li>
+
+                <!-- <li class="nav-item">
+                <a class="nav-link" style="cursor: pointer; text-decoration: none; color: #E4E6EB; font-size: 17px; font-weight: bold;" onclick="logout()">
+                   <img src="img/logout.png" alt="Setting Icon" style="width: 40px; height: 40px;">
+                </a>
+             </li> -->
+            </ul>
+        </div>
+
+    </nav>
+
+
+    <!-- user details -->
+    <div class="modal fade" id="userDetailsModal" tabindex="-1" role="dialog" aria-labelledby="userDetailsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #242526; border-radius:20px;">
+                <div class="modal-header">
+                    <h5 class="modal-title text-white" id="userDetailsModalLabel">User Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-white" id="userDetailsContent">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#updateDetailsModal">Update Details</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="updateDetailsModal" tabindex="-1" role="dialog"
+        aria-labelledby="updateDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content" style="background-color: #FFF; border-radius:20px;">
+                <div class="modal-header">
+                    <h5 class="modal-title bg-white" id="updateDetailsModalLabel">Update User Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="updateDetailsForm" onsubmit="updateDetails()">
+                        <div class="form-group" style="margin-bottom: 20px">
+                            <input type="text" class="form-control" id="updated-firstname"
+                                placeholder="Enter updated Firstname" value="">
+                            <small id="firstnameErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="text" class="form-control" id="updated-middlename"
+                                placeholder="Enter updated middle name">
+                            <small id="middlenameErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+                            <input type="text" class="form-control" id="updated-lastname"
+                                placeholder="Enter updated last name">
+                            <small id="lastnameErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="email" class="form-control" id="updated-email"
+                                placeholder="Enter updated email">
+                            <small id="emailErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="tel" class="form-control" id="updated-cpnumber"
+                                placeholder="Enter updated contact number">
+                            <small id="contactErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="text" class="form-control" id="updated-username"
+                                placeholder="Enter updated username">
+                            <small id="userErrorMsg" class="form-text text-danger"></small>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 20px">
+
+                            <input type="password" class="form-control" id="updated-password"
+                                placeholder="Enter updated password">
+                            <small id="passErrorMsg" class="form-text text-danger"></small>
+                        </div>
+
+                        <div class="d-flex justify-content-end align-items-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row-md-5 mb-3 ">
+
+
+        
+
+
+        <div class="col-md-20" id="usersContainer"></div>
+
+
+    </div>
+
+
+
+
+
+    <div class="modal fade" id="imageModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="background-color: #242526;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel" style="color: #E4E6EB;">Post Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="postDetails">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="userPostsModal" tabindex="-1" role="dialog" aria-labelledby="userPostsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content" style="background-color: #242526;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userPostsModalLabel" style="color: #E4E6EB;">User Posts</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="userPostsModalBody">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Comment Modal -->
+    <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="commentModalLabel">Add Comment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="commentInput">Comment:</label>
+                            <textarea class="form-control bg-dark text-white" id="commentInput" rows="3"
+                                placeholder="Enter your comment"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="addComment()">Add Comment</button>
+                </div>
+                <!-- Display area for fetched comments -->
+                <div class="modal-body bg-dark text-white">
+                    <h5>Comments:</h5>
+                    <div id="firstname"></div>
+                    <div id="commentList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="js/chat.js"></script>
+    <script src="js/index.js"></script>
+
+
+    <script>
+        fetchUserDetails();
+
+        function openUpdateDetailsModal() {
+            $('#userDetailsModal').modal('hide');
+            $('#updateDetailsModal').modal('show');
+        }
+
+
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("damn");
+            const userId = sessionStorage.getItem('userId');
+
+            if (userId) {
+                axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+                    .then(response => {
+                        console.log('User details response:', response.data);
+                        const userData = response.data;
+
+                        document.getElementById("userFirstname").textContent = userData.firstname;
+
+                        document.getElementById("userDetailsContent").innerHTML = `
+                <p><strong>First Namesss:</strong> ${localStorage.getItem("firstname")}</p>
+                <p><strong>Middle Name:</strong> ${localStorage.getItem("middlename")}</p>
+                <p><strong>Last Name:</strong> ${localStorage.getItem("lastname")}</p>
+                <p><strong>Email:</strong> ${localStorage.getItem("email")}</p>
+                <p><strong>Contact Number:</strong> ${localStorage.getItem("cpnumber")}</p>
+                <p><strong>Username:</strong> ${localStorage.getItem("username")}</p>
+                
+            `;
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user details:', error);
+                    });
+            } else {
+                console.error('userId not available');
+            }
+        });
+
+        function openUpdateDetailsForm() {
+            document.getElementById('update-details-form-container').style.display = 'block';
+        }
+
+        function updateDetails() {
+            console.log("update");
+
+            var updatedFirstname = document.getElementById("updated-firstname").value;
+            var updatedMiddlename = document.getElementById("updated-middlename").value;
+            var updatedLastname = document.getElementById("updated-lastname").value;
+            var updatedEmail = document.getElementById("updated-email").value;
+            var updatedCpnumber = document.getElementById("updated-cpnumber").value;
+            var updatedUsername = document.getElementById("updated-username").value;
+            var updatedPassword = document.getElementById("updated-password").value;
+
+
+            var formData = new FormData();
+            formData.append("operation", "updateDetails");
+            formData.append("json", JSON.stringify({
+                "updated-firstname": updatedFirstname,
+                "updated-middlename": updatedMiddlename,
+                "updated-lastname": updatedLastname,
+                "updated-email": updatedEmail,
+                "updated-cpnumber": updatedCpnumber,
+                "updated-username": updatedUsername,
+                "updated-password": updatedPassword,
+                "userId": sessionStorage.getItem("userId")
+            }));
+
+            axios.post('http://localhost/sync/PHP/login.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
+                .then(function (response) {
+                    console.log(response.data);
+
+                    window.location.reload();
+
+
+                })
+                .catch(function (error) {
+                    console.error('Error updating details:', error);
+                });
+        }
+
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Page loaded");
+            const userId = sessionStorage.getItem('userId');
+
+            if (userId) {
+                axios.get(`http://localhost/sync/PHP/fetch_user_details.php?userId=${userId}`)
+                    .then(response => {
+                        console.log('User details response:', response.data);
+                        const userData = response.data;
+
+
+
+
+                        document.getElementById("updated-firstname").value = localStorage.getItem("firstname");
+                        document.getElementById("updated-middlename").value = localStorage.getItem("middlename");
+                        document.getElementById("updated-lastname").value = localStorage.getItem("lastname");
+                        document.getElementById("updated-email").value = localStorage.getItem("email");
+                        document.getElementById("updated-cpnumber").value = localStorage.getItem("cpnumber");
+                        document.getElementById("updated-username").value = localStorage.getItem("username");
+                        document.getElementById("updated-password").value = localStorage.getItem("password");
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user details:', error);
+                    });
+            } else {
+                console.error('userId not available');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
